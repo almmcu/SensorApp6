@@ -18,7 +18,7 @@ import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener {
-
+///sdasefsadfasdfadfadf/**/
     private Sensor mGyroSensor;
     private Sensor mLineerAccSensor;
     private TextView tv;
