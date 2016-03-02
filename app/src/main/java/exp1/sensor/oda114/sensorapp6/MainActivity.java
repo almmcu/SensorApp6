@@ -1,6 +1,7 @@
 package exp1.sensor.oda114.sensorapp6;
 
 import android.content.Context;
+import android.content.Intent;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -8,16 +9,27 @@ import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.Scalar;
+
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+import exp1.sensor.oda114.sensorapp6.photo.MyCameraActivity;
+
+public class MainActivity extends AppCompatActivity implements SensorEventListener,CameraBridgeViewBase.CvCameraViewListener {
 ///sdasefsadfasdfadfadf/**/
     private Sensor mGyroSensor;
     private Sensor mLineerAccSensor;
@@ -35,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     long dif = 0;
     int a = 0;
     int mapIndex = 0;
-
+public static final String TAG = "Bu Uygulama";
     double mesafe = 0;
     Button btn ;
     int cal = 0 ;
@@ -43,13 +55,17 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     ArrayList<Double> saniyelikMesurement = new ArrayList<>();
     ArrayList<Double> saniyelikMesafe = new ArrayList<>();
     ArrayList<ArrayList<Double>> accValueMap = new ArrayList<>();
-
+   // static{System.loadLibrary("opencv_java3"); }
+    //static{ System.loadLibrary("opencv_java"); }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try {
+
+           /* Mat m = new Mat(5, 10, CvType.CV_8UC1, new Scalar(0));
+            System.out.println(m.toString());*/
             sMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mLineerAccSensor = sMgr.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
 
@@ -72,6 +88,37 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
     }*/
 
+
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch(status) {
+                case LoaderCallbackInterface.SUCCESS:
+                    Log.i(TAG,"OpenCV Manager Connected");
+                    //from now onwards, you can use OpenCV API
+                    Mat m = new Mat(5, 10, CvType.CV_8UC1, new Scalar(0));
+                    break;
+                case LoaderCallbackInterface.INIT_FAILED:
+                    Log.i(TAG,"Init Failed");
+                    break;
+                case LoaderCallbackInterface.INSTALL_CANCELED:
+                    Log.i(TAG,"Install Cancelled");
+                    break;
+                case LoaderCallbackInterface.INCOMPATIBLE_MANAGER_VERSION:
+                    Log.i(TAG,"Incompatible Version");
+                    break;
+                case LoaderCallbackInterface.MARKET_ERROR:
+                    Log.i(TAG,"Market Error");
+                    break;
+                default:
+                    Log.i(TAG, "OpenCV Manager Install");
+                    super.onManagerConnected(status);
+                    break;
+            }
+        }
+    };
+
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
     public void onSensorChanged(SensorEvent event) {
@@ -79,7 +126,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
         long timediff = temp - currentTimeinMilisecoond;
         Sensor sensor = event.sensor;
-        if (timediff >= 10){
+        if (timediff >= 5){
 
             if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
                 float angularXSpeed = event.values[0];
@@ -161,6 +208,10 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
 
 
     }
+    public void openCamera (View view){
+        Intent inIntent = new Intent(getApplicationContext(), MyCameraActivity.class);
+        startActivity(inIntent);
+    }
 
     public void baslaBitir (View view){
 
@@ -215,6 +266,8 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     protected void onResume() {
         // Register a listener for the sensor.
         super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
+
        /* sMgr.registerListener((SensorEventListener) this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sMgr.registerListener((SensorEventListener) this, mGyroSensor, SensorManager.SENSOR_DELAY_NORMAL);*/
     }
@@ -229,5 +282,25 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onCameraViewStarted(int width, int height) {
+
+    }
+
+    @Override
+    public void onCameraViewStopped() {
+
+    }
+
+    @Override
+    public Mat onCameraFrame(Mat inputFrame) {
+        return null;
+    }
+
+    @Override
+    public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
+        return null;
     }
 }

@@ -23,14 +23,21 @@
         android:text="Basla / Bitir"
         android:onClick="baslaBitir"
         android:id="@+id/btnBaslaBitir"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Camera"
+        android:onClick="openCamera"
+        android:id="@+id/btnCamera"/>
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         android:text="Hello World, MyActivity"
         android:id="@+id/txtSaniyelikMesafe"
-        android:textColor="@color/kırmızı"
-        />
+
+        android:background="#ff5f2e"
+        android:textColor="#584cff" />
 
     <TextView
         android:layout_width="fill_parent"
