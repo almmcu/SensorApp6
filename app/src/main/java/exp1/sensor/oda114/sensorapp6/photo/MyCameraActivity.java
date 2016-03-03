@@ -1,19 +1,31 @@
 package exp1.sensor.oda114.sensorapp6.photo;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.TextView;
+
+import org.opencv.android.BaseLoaderCallback;
+import org.opencv.android.CameraBridgeViewBase;
+import org.opencv.android.LoaderCallbackInterface;
+import org.opencv.android.OpenCVLoader;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -23,12 +35,12 @@ import java.security.SecureRandom;
 
 import exp1.sensor.oda114.sensorapp6.R;
 
-public class MyCameraActivity extends AppCompatActivity {
+public class MyCameraActivity extends AppCompatActivity implements SensorEventListener {
 
     private static final int CAMERA_REQUEST = 1888;
 
-
-
+    private SensorManager sMgr;
+    private Sensor mLineerAccSensor;
     static String str_Camera_Photo_ImagePath = "";
     private static File f;
     private static int Take_Photo = 2;
@@ -40,44 +52,66 @@ public class MyCameraActivity extends AppCompatActivity {
     int storeposition = 0;
     public static GridView gridview;
     public static ImageView imageView;
-
-
+    private CameraBridgeViewBase mOpenCvCameraView;
+    public static final String TAG = "My    Camera Activity ";
+    int counter4Images = 0;
+    TextView txtAcc;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_camera);
-        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
-        Button photoButton = (Button) this.findViewById(R.id.button1);
-        photoButton.setOnClickListener(new View.OnClickListener() {
 
-            @Override
-            public void onClick(View v) {
-                str_SaveFolderName = Environment
-                        .getExternalStorageDirectory()
-                        .getAbsolutePath()
-                        + "/openCvPhotos";
-                str_randomnumber = String.valueOf(nextSessionId());
-                wallpaperDirectory = new File(str_SaveFolderName);
-                if (!wallpaperDirectory.exists())
-                    wallpaperDirectory.mkdirs();
-                str_Camera_Photo_ImageName = str_randomnumber
-                        + ".jpg";
-                str_Camera_Photo_ImagePath = str_SaveFolderName
-                        + "/" + str_randomnumber + ".jpg";
-                System.err.println(" str_Camera_Photo_ImagePath  "
-                        + str_Camera_Photo_ImagePath);
-                f = new File(str_Camera_Photo_ImagePath);
-                startActivityForResult(new Intent(
-                                MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
-                                MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)),
-                        Take_Photo);
-                System.err.println("f  " + f);
-            }
-        });
+        sMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mLineerAccSensor = sMgr.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
+
+        this.imageView = (ImageView)this.findViewById(R.id.imageView1);
+        txtAcc = (TextView) findViewById(R.id.txtAcc);
+        Button photoButton = (Button) this.findViewById(R.id.button1);
+
     }
 
 
+
+    public void resimCek (View view){
+
+        str_SaveFolderName = Environment
+                .getExternalStorageDirectory()
+                .getAbsolutePath()
+                + "/openCvPhotos";
+        str_randomnumber = String.valueOf(nextSessionId());
+        wallpaperDirectory = new File(str_SaveFolderName);
+        if (!wallpaperDirectory.exists())
+            wallpaperDirectory.mkdirs();
+        str_Camera_Photo_ImageName = str_randomnumber
+                + ".jpg";
+        str_Camera_Photo_ImagePath = str_SaveFolderName
+                + "/" + str_randomnumber + ".jpg";
+        System.err.println(" str_Camera_Photo_ImagePath  "
+                + str_Camera_Photo_ImagePath);
+
+
+        // eğer sayactan ikiye bölünen 0 ise ilk resim çekilmiş demektir.
+        // sensor aktif edilebililir.
+
+        if (counter4Images %4 == 0 ){
+            try {
+                sMgr.unregisterListener((SensorEventListener) this);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+        }
+        counter4Images ++;
+
+        f = new File(str_Camera_Photo_ImagePath);
+        startActivityForResult(new Intent(
+                        MediaStore.ACTION_IMAGE_CAPTURE).putExtra(
+                        MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)),
+                Take_Photo);
+        System.err.println("f  " + f);
+
+    }
     // used to create randon numbers
     public String nextSessionId() {
         SecureRandom random = new SecureRandom();
@@ -102,6 +136,15 @@ public class MyCameraActivity extends AppCompatActivity {
             } else {
                 bitmap = null;
             }
+
+            // eğer sayactan ikiye bölünen 0 ise ilk resim çekilmiş demektir.
+            // sensor aktif edilebililir.
+
+            if (counter4Images %4 == 1 ){
+                sMgr.registerListener(this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+            }
+            counter4Images ++;
         }
     }
 
@@ -181,4 +224,80 @@ public class MyCameraActivity extends AppCompatActivity {
         }
 
     }
+    @Override
+    public void onResume()
+    {
+        super.onResume();
+        OpenCVLoader.initAsync(OpenCVLoader.OPENCV_VERSION_3_1_0, this, mLoaderCallback);
+       // sMgr.registerListener((SensorEventListener) this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+
+        try {
+            sMgr.unregisterListener((SensorEventListener) this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
+
+        try {
+            sMgr.unregisterListener((SensorEventListener) this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+        Sensor sensor = event.sensor;
+
+
+            if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+                float lineerXAccerometer = event.values[0];
+                float lineerYAccerometer = event.values[1];
+                float lineerZAccerometer = event.values[2];
+                txtAcc.setText("" + lineerXAccerometer);
+            }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
+    }
+
+
+    private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
+        @Override
+        public void onManagerConnected(int status) {
+            switch (status) {
+                case LoaderCallbackInterface.SUCCESS:
+                {
+                    Log.i(TAG, "OpenCV loaded successfully");
+                    try {
+
+
+
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                } break;
+                default:
+                {
+                    super.onManagerConnected(status);
+                } break;
+            }
+        }
+    };
 }

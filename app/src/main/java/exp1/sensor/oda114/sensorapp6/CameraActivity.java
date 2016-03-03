@@ -1,5 +1,8 @@
 package exp1.sensor.oda114.sensorapp6;
 
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,11 +20,11 @@ import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.core.Mat;
 
-public class CameraActivity extends AppCompatActivity implements CvCameraViewListener2 {
+public class CameraActivity extends AppCompatActivity implements CvCameraViewListener2, SensorEventListener {
 
     private CameraBridgeViewBase mOpenCvCameraView;
     public static final String TAG = "Camera Activity ";
-    private MyCameraView myOpenCvCameraView;
+   // private MyCameraView myOpenCvCameraView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -29,14 +32,14 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_camera);
-        /*mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
+        mOpenCvCameraView = (CameraBridgeViewBase) findViewById(R.id.HelloOpenCvView);
         mOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-        mOpenCvCameraView.setCvCameraViewListener(this);*/
+        mOpenCvCameraView.setCvCameraViewListener(this);
 
         try {
-            myOpenCvCameraView = (MyCameraView) findViewById(R.id.HelloOpenCvView);
+            /*myOpenCvCameraView = (MyCameraView) findViewById(R.id.HelloOpenCvView);
             myOpenCvCameraView.setVisibility(SurfaceView.VISIBLE);
-            myOpenCvCameraView.setCvCameraViewListener(this);
+            myOpenCvCameraView.setCvCameraViewListener(this);*/
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,11 +68,11 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
     }
 
     public void takePicture (View view){
-       // mOpenCvCameraView.enableView();
-        myOpenCvCameraView.enableView();
+        mOpenCvCameraView.enableView();
+        //myOpenCvCameraView.enableView();
 
-        String filename = "teste.jpg";
-        myOpenCvCameraView.takePicture(filename);
+       /* String filename = "teste.jpg";
+        mOpenCvCameraView.takePicture(filename);*/
 
     }
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -106,20 +109,20 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
     public void onPause()
     {
         super.onPause();
-        /*if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();*/
+        if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();
 
-        if (myOpenCvCameraView != null)
-            myOpenCvCameraView.disableView();
+        /*if (myOpenCvCameraView != null)
+            myOpenCvCameraView.disableView();*/
     }
 
     public void onDestroy() {
         super.onDestroy();
-        /*if (mOpenCvCameraView != null)
-            mOpenCvCameraView.disableView();*/
-
         if (mOpenCvCameraView != null)
             mOpenCvCameraView.disableView();
+
+        /*if (mOpenCvCameraView != null)
+            mOpenCvCameraView.disableView();*/
     }
 
 
@@ -131,5 +134,15 @@ public class CameraActivity extends AppCompatActivity implements CvCameraViewLis
 
     public Mat onCameraFrame(CameraBridgeViewBase.CvCameraViewFrame inputFrame) {
         return inputFrame.rgba();
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }
