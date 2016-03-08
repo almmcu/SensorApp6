@@ -26,6 +26,11 @@ import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfKeyPoint;
+import org.opencv.features2d.DescriptorExtractor;
+import org.opencv.features2d.FeatureDetector;
+import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,6 +39,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 import exp1.sensor.oda114.sensorapp6.R;
+
 
 public class MyCameraActivity extends AppCompatActivity implements SensorEventListener {
 
@@ -56,11 +62,23 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
     public static final String TAG = "My    Camera Activity ";
     int counter4Images = 0;
     TextView txtAcc;
+    private String image1 = "", image2 = "";
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_my_camera);
+
+
+        try {
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 
         sMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mLineerAccSensor = sMgr.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -97,6 +115,7 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
         if (counter4Images %4 == 0 ){
             try {
                 sMgr.unregisterListener((SensorEventListener) this);
+                image2 = str_Camera_Photo_ImagePath;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -110,6 +129,11 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
                         MediaStore.EXTRA_OUTPUT, Uri.fromFile(f)),
                 Take_Photo);
         System.err.println("f  " + f);
+
+        if (counter4Images %5 == 0 ){
+           MyCameraActivity myCameraActivity = new MyCameraActivity();
+            myCameraActivity.SURFExtraction();
+        }
 
     }
     // used to create randon numbers
@@ -137,11 +161,12 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
                 bitmap = null;
             }
 
-            // eğer sayactan ikiye bölünen 0 ise ilk resim çekilmiş demektir.
+            // eğer sayactan dörde bölünen 1 ise ilk resim çekilmiş demektir.
             // sensor aktif edilebililir.
 
             if (counter4Images %4 == 1 ){
                 sMgr.registerListener(this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
+                image1 = str_Camera_Photo_ImagePath;
 
             }
             counter4Images ++;
@@ -287,7 +312,8 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
                     Log.i(TAG, "OpenCV loaded successfully");
                     try {
 
-
+                     System.loadLibrary("nonfree");
+                     System.loadLibrary("opencv_java");
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -300,4 +326,30 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
             }
         }
     };
+
+
+
+    public void SURFExtraction()
+    {
+        try {
+            FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
+            DescriptorExtractor SurfExtractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
+
+            Mat img1 = Imgcodecs.imread(image1);//one of my face
+            Mat img2 = Imgcodecs.imread(image2);//one of my different face
+
+            //extract keypoints
+            MatOfKeyPoint keypoints = new MatOfKeyPoint();
+            MatOfKeyPoint logoKeypoints = new MatOfKeyPoint();
+
+            detector.detect(img1, keypoints);//this is the problem "fatal signal"
+            Log.d("LOG!", "number of query Keypoints= " + keypoints.size());
+            detector.detect(img2, logoKeypoints);
+            Log.d("LOG!", "number of logo Keypoints= " + logoKeypoints.size());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
 }
