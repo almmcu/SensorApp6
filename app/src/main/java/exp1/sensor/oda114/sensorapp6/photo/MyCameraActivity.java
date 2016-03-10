@@ -116,6 +116,7 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
             try {
                 sMgr.unregisterListener((SensorEventListener) this);
                 image2 = str_Camera_Photo_ImagePath;
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -131,8 +132,11 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
         System.err.println("f  " + f);
 
         if (counter4Images %5 == 0 ){
-           MyCameraActivity myCameraActivity = new MyCameraActivity();
-            myCameraActivity.SURFExtraction();
+            Intent i = new Intent(MyCameraActivity.this, FeatureDetectionActivityOnPhoto.class);
+
+            i.putExtra("IMG_PATH_1", image1);
+            i.putExtra("IMG_PATH_2", image2);
+            startActivity(i);
         }
 
     }

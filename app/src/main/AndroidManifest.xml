@@ -43,6 +43,14 @@
             android:name=".photo.MyCameraActivity"
             android:label="@string/title_activity_my_camera" >
         </activity>
+        <activity
+            android:name=".photo.FeatureDetectionActivity"
+            android:label="@string/title_activity_feature_detection" >
+        </activity>
+        <activity
+            android:name=".photo.FeatureDetectionActivityOnPhoto"
+            android:label="@string/title_activity_feature_detection_activity_on_photo" >
+        </activity>
     </application>
 
 </manifest>
