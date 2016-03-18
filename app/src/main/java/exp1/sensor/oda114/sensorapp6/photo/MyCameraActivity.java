@@ -115,7 +115,7 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
         if (counter4Images %4 == 0 ){
             try {
                 sMgr.unregisterListener((SensorEventListener) this);
-                image2 = str_Camera_Photo_ImagePath;
+                image2 = str_Camera_Photo_ImageName;
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -170,7 +170,7 @@ public class MyCameraActivity extends AppCompatActivity implements SensorEventLi
 
             if (counter4Images %4 == 1 ){
                 sMgr.registerListener(this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
-                image1 = str_Camera_Photo_ImagePath;
+                image1 = str_Camera_Photo_ImageName;
 
             }
             counter4Images ++;

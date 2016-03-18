@@ -1,6 +1,7 @@
 package exp1.sensor.oda114.sensorapp6.photo;
 
 import android.graphics.Bitmap;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +15,7 @@ import org.opencv.android.CameraBridgeViewBase;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
 import org.opencv.android.Utils;
+import org.opencv.core.DMatch;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Scalar;
@@ -26,6 +28,7 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 import java.sql.SQLOutput;
+import java.util.ArrayList;
 import java.util.List;
 
 import exp1.sensor.oda114.sensorapp6.R;
@@ -46,6 +49,7 @@ private Mat                    mGrayMat;
 
         FeatureDetector featureDetector;
         MatOfKeyPoint keyPoints;
+        MatOfKeyPoint logokeyPoints;
         DescriptorExtractor descriptorExtractor;
         DescriptorMatcher descriptorMatcher;
 
@@ -105,6 +109,7 @@ private Mat                    mGrayMat;
         descriptorExtractor=DescriptorExtractor.create(DescriptorExtractor.SURF);
         descriptorMatcher=DescriptorMatcher.create(6);
         keyPoints = new MatOfKeyPoint();
+        logokeyPoints = new MatOfKeyPoint();
         descriptors = new Mat();
     }
 
@@ -132,8 +137,67 @@ private Mat                    mGrayMat;
                 {
                     System.loadLibrary("opencv_java");
                     System.loadLibrary("nonfree");
+                    imgPath1 = "8ba3hb9l8tqeapr2tu88n45182.jpg";
+                    imgPath2= "8q0gsa9bvqcfqjg3dv372etk0q.jpg";
+                    File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
+                    File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
+                    Mat image1, image2 ;
+                    if (file1.exists()){
+                        System.out.println(file1);
+                    }
+
+                    if (file2.exists()){
+                        System.out.println(file1);
+                    }
+
+                    if (file1.exists() && file2.exists()){
+                        image1 = Imgcodecs.imread(file1.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
+                        image2 = Imgcodecs.imread(file2.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
+
+                        // FAST Feature Detection.................
+                        /*FeatureDetector FAST = FeatureDetector.create(FeatureDetector.FAST);
+                        keyPoints = new MatOfKeyPoint();
+                        logokeyPoints = new MatOfKeyPoint();
+                        // extract keypoints
+                        FAST.detect(image1, keyPoints);
+                        FAST.detect(image2, logokeyPoints);*/
+
+                        // Surf Feature Detection..........
+                        FeatureDetector SURF = FeatureDetector.create(FeatureDetector.SURF);
+                        keyPoints = new MatOfKeyPoint();
+                        logokeyPoints = new MatOfKeyPoint();
+                        // extract keypoints
+                        SURF.detect(image1, keyPoints);
+                        SURF.detect(image2, logokeyPoints);
+
+                        DescriptorExtractor SurfExtractor = DescriptorExtractor
+                                .create(DescriptorExtractor.SURF);
+                        Mat descriptors = new Mat();
+                        Mat logoDescriptors = new Mat();
+
+                        SurfExtractor.compute(image1, keyPoints, descriptors);
+                        SurfExtractor.compute(image2, logokeyPoints, logoDescriptors);
+
+                        List<DMatch> matches = new ArrayList<DMatch>();
+
+
+                        Log.e("LOG!!!!!!!!!!!!!!!!!!!", "number of logo Keypoints= " + logokeyPoints.size());
+                        Log.e("LOG!!!!!!!!!!!!!!!!!!!", "number of logo Keypoints= " + logokeyPoints.size());
+                        Log.e("LOG!!!!!!!!!!!!!!!!!!!", "number of  Keypoints= " + keyPoints.size());
+                        Log.e("LOG!!!!!!!!!!!!!!!!!!!", "number of  Keypoints= " + keyPoints.size());
+
+                        //matches = knn(descriptors, logoDescriptors);
+                        //Scalar blue = new Scalar(0, 0, 255);
+                       // Scalar red = new Scalar(255, 0, 0);
+                       // Features2d.drawMatches(image2, logokeyPoints, image1, keyPoints,
+                        //        matches, rgbout, blue, red);
+
+                    }
+
                     /*mOpenCvCameraView.enableView();*/
-                    try {
+
+                    // asagıdaki kısım yine çalışan kod silmedim..
+                 /*   try {
                         mRgba = new Mat();
                         mGrayMat = new Mat();
                         featureDetector=FeatureDetector.create(FeatureDetector.SIFT);
@@ -146,20 +210,18 @@ private Mat                    mGrayMat;
 
                         Imgproc.cvtColor(rgba, rgba, Imgproc.COLOR_RGB2GRAY);
                         featureDetector.detect(rgba, keyPoints);
-                        for (int i = 0; i < 1000; i++) {
-                            Log.e("LOG!1!!!!!!!!!!!!!!!!!!", "number of query Keypoints= " + keyPoints.size());
-                        }
+
 
                         //Features2d.drawKeypoints(rgba, keyPoints, rgba);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
 
-                    /*FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
+                   FeatureDetector detector = FeatureDetector.create(FeatureDetector.SURF);
                     DescriptorExtractor SurfExtractor = DescriptorExtractor.create(DescriptorExtractor.SURF);
 
-                    Mat img1 = Imgcodecs.imread(imgPath1, 4); // ilk resim
-                    Mat img2 = Imgcodecs.imread(imgPath2, 4); // ikinci resim
+                    Mat img1 = Imgcodecs.imread(imgPath1); // ilk resim
+                    Mat img2 = Imgcodecs.imread(imgPath2); // ikinci resim
 
                     //extract keypoints
                     MatOfKeyPoint keypoints = new MatOfKeyPoint();
@@ -203,8 +265,8 @@ private Mat                    mGrayMat;
                             e.printStackTrace();
                         }
                         //displayImage(Mat2BufferedImage(outputImage), "Feautures_"+detectorType);
-                    }*/
-
+                    }
+                    */
                 } break;
                 default:
                 {
