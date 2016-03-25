@@ -9,4 +9,6 @@
     <string name="title_activity_feature_detection_activity_on_photo">
         FeatureDetectionActivityOnPhoto
     </string>
+    <string name="title_activity_feature_detection_on_photo">FeatureDetectionOnPhotoActivity
+    </string>
 </resources>

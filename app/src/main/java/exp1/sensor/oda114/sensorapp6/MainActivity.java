@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivity;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
+import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
 import exp1.sensor.oda114.sensorapp6.photo.MyCameraActivity;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener,CameraBridgeViewBase.CvCameraViewListener {
@@ -211,7 +212,7 @@ public static final String TAG = "Bu Uygulama";
 
     }
     public void openCamera (View view){
-        Intent inIntent = new Intent(getApplicationContext(), MyCameraActivity.class);
+        Intent inIntent = new Intent(getApplicationContext(), FeatureDetectionOnPhotoActivity.class);
         startActivity(inIntent);
 
     }
