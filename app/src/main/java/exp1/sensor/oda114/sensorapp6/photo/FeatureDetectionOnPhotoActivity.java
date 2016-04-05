@@ -17,6 +17,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Size;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
@@ -27,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import exp1.sensor.oda114.sensorapp6.R;
+import exp1.sensor.oda114.sensorapp6.dbscan.DBScanTest;
 import exp1.sensor.oda114.sensorapp6.kmeans.KMeans;
 
 public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
@@ -50,12 +52,14 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                 case LoaderCallbackInterface.SUCCESS: {
                     System.loadLibrary("opencv_java");
                     System.loadLibrary("nonfree");
-                    imgPath1 = "8ba3hb9l8tqeapr2tu88n45182.jpg";
-                    imgPath2 = "8q0gsa9bvqcfqjg3dv372etk0q.jpg";
-                    imgPath1 = "left1_12.jpg";
-                    imgPath2 = "right1_12_20.jpg";
-                    File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
-                    File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
+
+                    imgPath1 = "/tekNesne/50cm/1_10.jpg";
+                    imgPath2 = "/tekNesne/50cm/1_0.jpg";
+                   // File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
+                    //File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
+
+                    File file1 = new File(Environment.getExternalStorageDirectory(), "Deneyler/" + imgPath1);
+                    File file2 = new File(Environment.getExternalStorageDirectory(), "Deneyler/" + imgPath2);
                     Mat image1, image2;
                     if (file1.exists() && file2.exists()) {
                         // Reesimleri Grayscale olarak okuma
@@ -78,7 +82,10 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
                         Log.e(TAG, "#keypoints " + keyPoints.size());
                         Log.e(TAG, "#logokeypoints " + logokeyPoints.size());
-
+                        Size ketP = keyPoints.size();
+                        System.out.println(ketP);
+                        ketP = logokeyPoints.size();
+                        System.out.println(ketP);
                         DescriptorExtractor SurfExtractor = DescriptorExtractor
                                 .create(DescriptorExtractor.SURF);
                         Mat descriptors = new Mat();
@@ -95,7 +102,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         good_matches = new LinkedList<>();
 
                         double max_dist = 0;
-                        double min_dist = 100;
+                        double min_dist = 1000;
 
                         matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
                         try {
@@ -141,6 +148,8 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         LinkedList<Point> sceneList = new LinkedList<>();
                         KMeans objKMeans = new KMeans();
                         KMeans sceneKMeans = new KMeans();
+                        DBScanTest sceneDBScanTest = new DBScanTest();
+                        DBScanTest objectDBScanTest = new DBScanTest();
 
 
                         for (int i = 0; i < good_matches.size(); i++) {
@@ -149,6 +158,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
                             // KMeans algoritmasını kullanabilmek için Point tipinde bir nesne oluşturduk.
                             exp1.sensor.oda114.sensorapp6.kmeans.Point point = null;
+
                             /**
                              *
                              *  Kmeans algoritmasını kullanabilmek için KMeans sınıfından iki nesne türetteik.
@@ -165,10 +175,12 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                                 // objList değerleri ekleniyor
                                 point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y);
                                 objKMeans.getPoints().add(point);
+                                objectDBScanTest.getHset().add(point);
 
                                 // sceneList değerleri ekleniyor
                                 point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x, keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.y);
                                 sceneKMeans.getPoints().add(point);
+                                sceneDBScanTest.getHset().add(point);
                             }
                         }
 
@@ -186,6 +198,16 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
 
                         System.out.println("K means Hesaplandı");
+
+                        objKMeans.clusterQuality(objKMeans);
+                        sceneKMeans.clusterQuality(sceneKMeans);
+                        System.out.println(objKMeans);
+                        System.out.println(sceneKMeans);
+
+
+                        sceneDBScanTest.applyDbscan();
+                        objectDBScanTest.applyDbscan();
+                        System.out.println("DBSCAN UYGULANDI");
                         // Bu kısımları yorum satırına almamızın nedeni bu kısımları henüz kullanma ihtiyacı hisstmediimizden kaynaklanmakta.
                        /* try {
                        obj.fromList(objList);
