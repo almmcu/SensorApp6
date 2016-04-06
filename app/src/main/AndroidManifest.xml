@@ -57,6 +57,10 @@
             android:name=".photo.FeatureDetectionOnPhotoActivity"
             android:label="@string/title_activity_feature_detection_on_photo" >
         </activity>
+        <activity
+            android:name=".camera.TakePhotoActivity"
+            android:label="@string/title_activity_take_photo" >
+        </activity>
     </application>
 
 </manifest>

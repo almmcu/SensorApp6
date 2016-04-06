@@ -12,8 +12,8 @@ import exp1.sensor.oda114.sensorapp6.kmeans.Point;
  * Created by Oda114 on 5.4.2016.
  */
 public class DBScanTest {
-    public static int minpoints = 5;
-    public static double tdistance = 30;
+    public static int minpoints = 7;
+    public static double tdistance = 20;
     public  double x1;
     public  double y1;
     public  Vector<Point> hset = new Vector<Point>();

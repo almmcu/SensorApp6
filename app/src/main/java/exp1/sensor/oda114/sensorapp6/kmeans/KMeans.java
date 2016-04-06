@@ -20,11 +20,19 @@ public class KMeans {
 
     private List<Point> points;
     private List<Cluster> clusters;
-    ArrayList<Double> distList ;
+    ArrayList<Double> distList ; // kümeler arasındaki kalite sıralamasını yapmak için
 
     public KMeans() {
         this.points = new ArrayList();
         this.clusters = new ArrayList();
+    }
+
+    public List<Cluster> getClusters() {
+        return clusters;
+    }
+
+    public void setClusters(List<Cluster> clusters) {
+        this.clusters = clusters;
     }
 
     public static void main(String[] args) {
@@ -46,20 +54,15 @@ public class KMeans {
     public void init() {
 
        /* BufferedReader br = null;
-
         try {
-
             String sCurrentLine;
-
             br = new BufferedReader(new FileReader("kmeans.txt"));
-
             while ((sCurrentLine = br.readLine()) != null) {
                 System.out.println(sCurrentLine);
                 String[] parts = sCurrentLine.split("\t");
                 Point p = new Point(Double.parseDouble( parts[0]), Double.parseDouble( parts[1]));
                 points.add(p);
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -70,7 +73,7 @@ public class KMeans {
             }
         }*/
         //Create Points
-      //  points = Point.createRandomPoints(MIN_COORDINATE,MAX_COORDINATE,NUM_POINTS);
+        //  points = Point.createRandomPoints(MIN_COORDINATE,MAX_COORDINATE,NUM_POINTS);
 
         //Create Clusters
         //Set Random Centroids
@@ -136,40 +139,6 @@ public class KMeans {
             cluster.clear();
         }
     }
-    void getIndex(KMeans kMeans){
-        int i = 1 ;
-        for (int j = 0; j < kMeans.getClusters().get(i).getPoints().size(); j ++){
-            int index = this.points.indexOf( kMeans.getClusters().get(i).getPoints().get(j));
-            System.out.println(index);
-        }
-    }
-
-     public void clusterQuality(KMeans kMeans){
-        // küme merkezi ve o kümenin en son bir birlerine olan uzaklıkları hesaplanıyor. (centroid, points)
-
-        this.distList = new ArrayList();
-        double d1 = 0;
-        for (int i = 0 ; i < NUM_CLUSTERS ; i ++ ){
-            int kümeElemanSayısı= kMeans.getClusters().get(i).getPoints().size();
-            for (int j = 0 ; j < kMeans.getClusters().get(i).getPoints().size(); j ++)
-            {
-                Point p1 = kMeans.getClusters().get(i).getCentroid();
-                Point p2 = (Point) kMeans.getClusters().get(i).getPoints().get(j);
-                // double a = distList.get(i) + Point.distance2(p1, p2);
-                d1 = d1 + Point.distance(p1, p2);
-                // distList.add(i, a);
-                //System.out.println(distList.get(i));
-            }
-            System.out.println(d1);
-//            distList.add(d1);
-            double d2 = d1 / kümeElemanSayısı;
-            distList.add(d2);
-
-
-        }
-        System.out.println(distList);
-    }
-
 
     private List getCentroids() {
         List<Point> centroids = new ArrayList(NUM_CLUSTERS);
@@ -224,7 +193,46 @@ public class KMeans {
         }
     }
 
-    public List<Cluster> getClusters() {
-        return clusters;
+
+    void getIndex(KMeans kMeans){
+        int i = 1 ;
+        for (int j = 0; j < kMeans.getClusters().get(i).getPoints().size(); j ++){
+            int index = this.points.indexOf( kMeans.getClusters().get(i).getPoints().get(j));
+            System.out.println(index);
+        }
     }
+
+    public int clusterQuality(KMeans kMeans){
+        // küme merkezi ve o kümenin en son bir birlerine olan uzaklıkları hesaplanıyor. (centroid, points)
+
+        this.distList = new ArrayList();
+        double d1 = 0;
+        for (int i = 0 ; i < NUM_CLUSTERS ; i ++ ){
+            int kümeElemanSayısı= kMeans.getClusters().get(i).getPoints().size();
+            for (int j = 0 ; j < kMeans.getClusters().get(i).getPoints().size(); j ++)
+            {
+                Point p1 = kMeans.getClusters().get(i).getCentroid();
+                Point p2 = (Point) kMeans.getClusters().get(i).getPoints().get(j);
+
+                d1 = d1 + Point.distance(p1, p2);
+
+            }
+            System.out.println(d1);
+
+            double d2 = d1 / kümeElemanSayısı;
+            distList.add(d2);
+        }
+        double enk = distList.get(0);
+        int index = 0;
+        for ( int i = 1 ; i < distList.size(); i++){
+            if ( distList.get(i) < enk)
+            {
+                enk =distList.get(i);
+                index = i;
+            }
+        }
+        System.out.println(distList);
+        return index;
+    }
+
 }

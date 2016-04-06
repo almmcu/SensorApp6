@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 
 import org.opencv.android.BaseLoaderCallback;
@@ -24,6 +25,7 @@ import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -43,6 +45,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
     MatOfDMatch gm;
     LinkedList<DMatch> good_matches;
     private String imgPath1 = "", imgPath2 = "";
+    ArrayList<Double> farkList ;
 
     // Opencv Kontrol ve Kod yazma
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -53,13 +56,15 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                     System.loadLibrary("opencv_java");
                     System.loadLibrary("nonfree");
 
-                    imgPath1 = "/tekNesne/50cm/1_10.jpg";
-                    imgPath2 = "/tekNesne/50cm/1_0.jpg";
+                    /**
+                     * imgPath1 = "/tekNesne/60cm/1_5.jpg";
+                     * imgPath2 = "/tekNesne/60cm/1_0.jpg";
+                    */
                    // File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
                     //File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
 
-                    File file1 = new File(Environment.getExternalStorageDirectory(), "Deneyler/" + imgPath1);
-                    File file2 = new File(Environment.getExternalStorageDirectory(), "Deneyler/" + imgPath2);
+                    File file1 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment/" + imgPath1);
+                    File file2 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment/" + imgPath2);
                     Mat image1, image2;
                     if (file1.exists() && file2.exists()) {
                         // Reesimleri Grayscale olarak okuma
@@ -152,6 +157,10 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         DBScanTest objectDBScanTest = new DBScanTest();
 
 
+                        double ort = 0;
+                        int count   = 0;
+                        farkList = new ArrayList<>();
+
                         for (int i = 0; i < good_matches.size(); i++) {
                             sceneList.addLast(keypoints_sceneList.get(good_matches.get(i).trainIdx).pt);
                             objList.addLast(keypoints_objectList.get(good_matches.get(i).queryIdx).pt);
@@ -170,7 +179,11 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                              * */
                             double x1 = keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x;
                             double x2 = keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x;
-                            if ((x1 - x2) >= 0) {
+                            double fark = x1 - x2 ;
+                            if ((fark) >= 0) {
+                                ort += (fark) ;
+                                farkList.add(fark);
+                                count ++;
 
                                 // objList değerleri ekleniyor
                                 point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y);
@@ -190,6 +203,8 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                          * İki resim için bulunan eşleşen noktalar kümeleme algoritmasına tabi tutluyor.
                          * */
 
+                        ort = ort / count;
+                        System.out.println(ort);
                         objKMeans.init();
                         objKMeans.calculate();
 
@@ -197,13 +212,26 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         sceneKMeans.calculate();
 
 
+                        int i = sceneKMeans.clusterQuality(sceneKMeans);
+                        ort = 0;
+                        for (int j = 0; j < sceneKMeans.getClusters().get(i).getPoints().size(); j ++){
+                            int index = sceneKMeans.getPoints().indexOf( sceneKMeans.getClusters().get(i).getPoints().get(j));
+                            ort += farkList.get(index);
+                            System.out.println(index);
+                        }
+                        ort = ort / sceneKMeans.getClusters().get(i).getPoints().size();
+                        ort /=10000;
+                        TextView txtDistance = (TextView) findViewById(R.id.txtDistance);
+
+                        txtDistance.setText(
+                                        "5  cm = " + (0.34 * 5) / ort +  "\n" +
+                                        "10 cm = " + (0.34 * 10) / ort + "\n" +
+                                        "15 cm = " + (0.34 * 15) / ort + "\n"+
+                                        "20 cm = " + (0.34 * 20) / ort + "\n"
+                        );
+
+                        System.out.println(ort);
                         System.out.println("K means Hesaplandı");
-
-                        objKMeans.clusterQuality(objKMeans);
-                        sceneKMeans.clusterQuality(sceneKMeans);
-                        System.out.println(objKMeans);
-                        System.out.println(sceneKMeans);
-
 
                         sceneDBScanTest.applyDbscan();
                         objectDBScanTest.applyDbscan();
@@ -244,12 +272,12 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
-                imgPath1 = extras.getString("IMG_PATH_1");
-                imgPath2 = extras.getString("IMG_PATH_2");
+                imgPath2 = extras.getString("IMG_PATH_1");
+                imgPath1 = extras.getString("IMG_PATH_2");
             }
         } else {
-            imgPath1 = (String) savedInstanceState.getSerializable("IMG_PATH_1");
-            imgPath2 = (String) savedInstanceState.getSerializable("IMG_PATH_2");
+            imgPath2 = (String) savedInstanceState.getSerializable("IMG_PATH_1");
+            imgPath1  = (String) savedInstanceState.getSerializable("IMG_PATH_2");
         }
 
 
