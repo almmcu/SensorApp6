@@ -59,7 +59,15 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                     /**
                      * imgPath1 = "/tekNesne/60cm/1_5.jpg";
                      * imgPath2 = "/tekNesne/60cm/1_0.jpg";
+                     * 2r0mv7tehchfbd0bm0jpqv6jqaLEFT
                     */
+
+                    /**
+                     *imgPath1 = "64php3hj29lrg6cbeov3igosrtRİGHT.jpg";
+                     imgPath2 = "64php3hj29lrg6cbeov3igosrtLEFT.jpg";
+                     * *
+                    * */
+
                    // File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
                     //File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
 
@@ -222,20 +230,49 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         ort = ort / sceneKMeans.getClusters().get(i).getPoints().size();
                         ort /=10000;
                         TextView txtDistance = (TextView) findViewById(R.id.txtDistance);
-
-                        txtDistance.setText(
-                                        "5  cm = " + (0.34 * 5) / ort +  "\n" +
+                        String output = "";
+                        output += "K-MEANS HESAPLAMASI İLE\n\n" +
+                                        "5  cm = " + (0.34 * 5) / ort + "\n" +
                                         "10 cm = " + (0.34 * 10) / ort + "\n" +
-                                        "15 cm = " + (0.34 * 15) / ort + "\n"+
-                                        "20 cm = " + (0.34 * 20) / ort + "\n"
-                        );
+                                        "15 cm = " + (0.34 * 15) / ort + "\n" +
+                                        "20 cm = " + (0.34 * 20) / ort + "\n";
 
                         System.out.println(ort);
                         System.out.println("K means Hesaplandı");
+// Kaç küme oluştu: sceneDBScanTest.getTrl().size();
+                        // i. kümedeki eleman sayısı. sceneDBScanTest.getTrl().get(i).size();
 
                         sceneDBScanTest.applyDbscan();
                         objectDBScanTest.applyDbscan();
+                        List<Double> ortList = new ArrayList<Double>();
+                        try {
+                            for (  i = 0; i < sceneDBScanTest.getTrl().size() ; i++ ){
+                                double ortalama = 0;
+                                for (int j = 0 ; j < sceneDBScanTest.getTrl().get(i).size(); j++){
+
+                                    int index = sceneDBScanTest.getHset().indexOf(sceneDBScanTest.getTrl().get(0).get(j));
+                                    ortalama += farkList.get(index);
+                                }
+                                ortalama /= sceneDBScanTest.getTrl().get(i).size();
+                                ortList.add(ortalama /10000);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        output +="\n----------------------------------------------\n";
+                        output += "\n\nDBSCAN HESAPLAMASI İLE\n\n";
+                        System.out.println(ortList);
+                        for (i = 0 ; i < ortList.size() ; i ++){
+                            output +=
+                                    "5  cm = " + (0.34 * 5) / ortList.get(i) + "\n" +
+                                    "10 cm = " + (0.34 * 10) / ortList.get(i) + "\n" +
+                                    "15 cm = " + (0.34 * 15) / ortList.get(i) + "\n" +
+                                    "20 cm = " + (0.34 * 20) / ortList.get(i) + "\n"+
+                                    "---------------\n";
+                        }
+
                         System.out.println("DBSCAN UYGULANDI");
+                        txtDistance.setText(output);
                         // Bu kısımları yorum satırına almamızın nedeni bu kısımları henüz kullanma ihtiyacı hisstmediimizden kaynaklanmakta.
                        /* try {
                        obj.fromList(objList);
