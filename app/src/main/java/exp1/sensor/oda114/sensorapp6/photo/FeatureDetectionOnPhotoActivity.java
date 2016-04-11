@@ -67,6 +67,10 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                      imgPath2 = "64php3hj29lrg6cbeov3igosrtLEFT.jpg";
                      * *
                     * */
+                    imgPath1 = "Duzgun15cmRİGHT.jpg";
+                    imgPath2 = "Duzgun15cmLEFT.jpg";
+                    imgPath1 = "Hatali5cmRİGHT.jpg";
+                    imgPath2 = "Hatali5cmLEFT.jpg";
 
                    // File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
                     //File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
