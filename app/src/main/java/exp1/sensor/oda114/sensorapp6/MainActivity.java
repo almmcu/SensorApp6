@@ -214,7 +214,7 @@ public static final String TAG = "Bu Uygulama";
 
     }
     public void openCamera (View view){
-        Intent inIntent = new Intent(getApplicationContext(), FeatureDetectionOnPhotoActivity.class);
+        Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
 //        inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
         startActivity(inIntent);
 

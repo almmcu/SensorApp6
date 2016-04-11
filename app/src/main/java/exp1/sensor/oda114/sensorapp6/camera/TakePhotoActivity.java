@@ -59,16 +59,33 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
     long currentTimeinMilisecoond;// gecen zaman arasındaki farkı hesaplamak içn
 
     /**
+     *  <h1> Değişkenler </h1>
+     *
      *  passedTime Herbir ölçümde geçen zamanı kaydediyor
      *  saniyelikMesurement Herbşr ölçümde ne gelen değerlieri kaydediyor.
      *  saniyelikMesafe Herbşr ölçümde ne kadar hareketetmiş
-     *
+     *  <br >
      * */
 
     ArrayList<Double> passedTime = new ArrayList<>();
     ArrayList<Double> anlikMesurement = new ArrayList<>();
     ArrayList<Double> anlikMesafeler = new ArrayList<>();
+    /**
+     * neTaraf eğer sağa hareket etmişse true, eğer sola hareket etmişse false
+     * */
 
+    /**
+     * Hareket yönünü belirlemek için kullanılan değişkenler
+     * netaraf değişkeni true ise sağa false ise sola doğru bir hareketlenme söz konusu oluyor.
+     *
+     * */
+    TextView txtAcc;
+    StringBuilder builder = new StringBuilder();
+    float [] history = new float[2];
+    public static final double X_THERESHOLD = 0.3;
+    public static final double Y_THERESHOLD = 2.0;
+    boolean neTaraf = true;
+    String [] direction = {"NONE","NONE"};
 
 
     @Override
@@ -160,14 +177,14 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
                     double anlikMeasure =  anlikMesurement.get(i);
                     if ( anlikMeasure < 0) anlikMeasure *= -1;
                     double anlikMesafe = 0.5 * passedTime.get(i) * passedTime.get(i) * anlikMeasure;
-                    anlikMesafe /= 1000;
+                    anlikMesafe /= 10000;
                     anlikMesafeler.add(anlikMesafe);
                     toplamMesafe += anlikMesafe;
                 }
                 System.out.println(anlikMesafeler);
                 System.out.println(toplamMesafe);
                 TextView txtMeasure = (TextView) findViewById(R.id.txtMeasure);
-                txtMeasure.setText("Geçen mesafe: " + toplamMesafe );
+                txtMeasure.setText("Geçen mesafe: " + toplamMesafe + "\n\n" + direction[0] );
             }else   btnCalculate.setVisibility(View.GONE);
         }
     }
@@ -177,6 +194,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
 
         i.putExtra("IMG_PATH_1", image1);
         i.putExtra("IMG_PATH_2", image2);
+        i.putExtra("NE_TARAF", neTaraf);
         startActivity(i);
     }
 
@@ -306,11 +324,34 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
         Sensor sensor = event.sensor;
 
         if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
-            float angularXSpeed = event.values[0];
-            float angularYSpeed = event.values[1];
-            float angularZSpeed = event.values[2];//
 
-            anlikMesurement.add( (double) angularXSpeed);
+            float xChange = history[0] - event.values[0];
+            float yChange = history[1] - event.values[1];
+
+            history[0] = event.values[0];
+            history[1] = event.values[1];
+
+            if (xChange > X_THERESHOLD){
+                direction[0] = "SOL";
+                neTaraf = false;
+            }
+            else if (xChange < -X_THERESHOLD){
+                direction[0] = "SAG";
+                neTaraf = true;
+            }
+
+            if (yChange > Y_THERESHOLD){
+                direction[1] = "YUKARI";
+            }
+            else if (yChange < -Y_THERESHOLD){
+                direction[1] = "ASAGI";
+            }
+
+            /*float angularXSpeed = event.values[0];
+            float angularYSpeed = event.values[1];
+            float angularZSpeed = event.values[2];//*/
+
+            anlikMesurement.add( (double) xChange);
             passedTime.add((double) timediff );
             currentTimeinMilisecoond = System.currentTimeMillis();
         }

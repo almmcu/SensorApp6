@@ -46,6 +46,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
     LinkedList<DMatch> good_matches;
     private String imgPath1 = "", imgPath2 = "";
     ArrayList<Double> farkList ;
+    boolean neTaraf = true;
 
     // Opencv Kontrol ve Kod yazma
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -67,10 +68,10 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                      imgPath2 = "64php3hj29lrg6cbeov3igosrtLEFT.jpg";
                      * *
                     * */
-                    imgPath1 = "Duzgun15cmRİGHT.jpg";
+                    /*imgPath1 = "Duzgun15cmRİGHT.jpg";
                     imgPath2 = "Duzgun15cmLEFT.jpg";
                     imgPath1 = "Hatali5cmRİGHT.jpg";
-                    imgPath2 = "Hatali5cmLEFT.jpg";
+                    imgPath2 = "Hatali5cmLEFT.jpg";*/
 
                    // File file1 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath1);
                     //File file2 = new File(Environment.getExternalStorageDirectory(), "openCvPhotos/" + imgPath2);
@@ -192,6 +193,10 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                             double x1 = keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x;
                             double x2 = keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x;
                             double fark = x1 - x2 ;
+                            if (!neTaraf) fark = x2 - x2 ; // Eğer neTaraf değişkeni false ise sola hareket var, true ise sağa hareket var demektir.
+
+
+
                             if ((fark) >= 0) {
                                 ort += (fark) ;
                                 farkList.add(fark);
@@ -316,6 +321,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
             if (extras != null) {
                 imgPath2 = extras.getString("IMG_PATH_1");
                 imgPath1 = extras.getString("IMG_PATH_2");
+                neTaraf = extras.getBoolean("NE_TARAF");
             }
         } else {
             imgPath2 = (String) savedInstanceState.getSerializable("IMG_PATH_1");

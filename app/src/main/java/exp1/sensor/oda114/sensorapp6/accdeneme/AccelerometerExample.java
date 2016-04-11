@@ -18,7 +18,7 @@ public class AccelerometerExample extends AppCompatActivity  implements SensorEv
 
     TextView txtAcc;
     StringBuilder builder = new StringBuilder();
-    public static final double X_THERESHOLD = 0.5;
+    public static final double X_THERESHOLD = 0.3;
     public static final double Y_THERESHOLD = 2.0;
 
     float [] history = new float[2];
