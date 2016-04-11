@@ -12,4 +12,5 @@
     <string name="title_activity_feature_detection_on_photo">FeatureDetectionOnPhotoActivity
     </string>
     <string name="title_activity_take_photo">TakePhotoActivity</string>
+    <string name="title_activity_accelerometer_example">AccelerometerExample</string>
 </resources>

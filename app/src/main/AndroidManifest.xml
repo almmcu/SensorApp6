@@ -61,6 +61,10 @@
             android:name=".camera.TakePhotoActivity"
             android:label="@string/title_activity_take_photo" >
         </activity>
+        <activity
+            android:name=".accdeneme.AccelerometerExample"
+            android:label="@string/title_activity_accelerometer_example" >
+        </activity>
     </application>
 
 </manifest>

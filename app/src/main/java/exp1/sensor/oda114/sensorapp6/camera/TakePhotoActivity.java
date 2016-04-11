@@ -1,9 +1,11 @@
 package exp1.sensor.oda114.sensorapp6.camera;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.hardware.Sensor;
+import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.net.Uri;
@@ -26,12 +28,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.util.ArrayList;
 
 import exp1.sensor.oda114.sensorapp6.R;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
 
-public class TakePhotoActivity extends AppCompatActivity {
+public class TakePhotoActivity extends AppCompatActivity implements  SensorEventListener{
 
     private static final int CAMERA_REQUEST = 1888;
 
@@ -50,6 +53,23 @@ public class TakePhotoActivity extends AppCompatActivity {
     int counter4Images = 0;
     private String image1 = "", image2 = "";
     Button btnCalculate ;
+    // Sensor kullanarak cihazın hareketini tahmin ediyor
+    private SensorManager sMgr;
+    private Sensor mLineerAccSensor;
+    long currentTimeinMilisecoond;// gecen zaman arasındaki farkı hesaplamak içn
+
+    /**
+     *  passedTime Herbir ölçümde geçen zamanı kaydediyor
+     *  saniyelikMesurement Herbşr ölçümde ne gelen değerlieri kaydediyor.
+     *  saniyelikMesafe Herbşr ölçümde ne kadar hareketetmiş
+     *
+     * */
+
+    ArrayList<Double> passedTime = new ArrayList<>();
+    ArrayList<Double> anlikMesurement = new ArrayList<>();
+    ArrayList<Double> anlikMesafeler = new ArrayList<>();
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +78,9 @@ public class TakePhotoActivity extends AppCompatActivity {
         this.imageView = (ImageView)this.findViewById(R.id.imageView1);
         btnCalculate = (Button) findViewById(R.id.btnCalculate);
         str_randomnumber = String.valueOf(nextSessionId());
+
+        sMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mLineerAccSensor = sMgr.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
     }
 
     public void resimCek (View view){
@@ -122,10 +145,29 @@ public class TakePhotoActivity extends AppCompatActivity {
             } else {
                 bitmap = null;
             }
+            if (    counter4Images == 1 ){
+                sMgr.registerListener(this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
+            }
             if (counter4Images  == 2 ){
-
+                sMgr.unregisterListener((SensorEventListener) this);
                 btnCalculate.setVisibility(View.VISIBLE);
+
+                System.out.println(passedTime);
+                System.out.println(anlikMesurement);
+                double toplamMesafe = 0;
+                for (int i = 1 ; i < passedTime.size(); i ++){
+                    double anlikMeasure =  anlikMesurement.get(i);
+                    if ( anlikMeasure < 0) anlikMeasure *= -1;
+                    double anlikMesafe = 0.5 * passedTime.get(i) * passedTime.get(i) * anlikMeasure;
+                    anlikMesafe /= 1000;
+                    anlikMesafeler.add(anlikMesafe);
+                    toplamMesafe += anlikMesafe;
+                }
+                System.out.println(anlikMesafeler);
+                System.out.println(toplamMesafe);
+                TextView txtMeasure = (TextView) findViewById(R.id.txtMeasure);
+                txtMeasure.setText("Geçen mesafe: " + toplamMesafe );
             }else   btnCalculate.setVisibility(View.GONE);
         }
     }
@@ -138,12 +180,7 @@ public class TakePhotoActivity extends AppCompatActivity {
         startActivity(i);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_take_photo, menu);
-        return true;
-    }
+
 
     public static Bitmap new_decode(File f) {
 
@@ -234,5 +271,55 @@ public class TakePhotoActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    @Override
+    public void onPause()
+    {
+        super.onPause();
+
+
+        try {
+            sMgr.unregisterListener((SensorEventListener) this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onDestroy() {
+        super.onDestroy();
+
+        try {
+            sMgr.unregisterListener((SensorEventListener) this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        long temp = System.currentTimeMillis();
+
+        long timediff = temp - currentTimeinMilisecoond;
+        Sensor sensor = event.sensor;
+
+        if (sensor.getType() == Sensor.TYPE_LINEAR_ACCELERATION) {
+            float angularXSpeed = event.values[0];
+            float angularYSpeed = event.values[1];
+            float angularZSpeed = event.values[2];//
+
+            anlikMesurement.add( (double) angularXSpeed);
+            passedTime.add((double) timediff );
+            currentTimeinMilisecoond = System.currentTimeMillis();
+        }
+
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 }

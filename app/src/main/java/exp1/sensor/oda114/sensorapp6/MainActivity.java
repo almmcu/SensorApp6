@@ -27,6 +27,7 @@ import org.opencv.core.Scalar;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
+import exp1.sensor.oda114.sensorapp6.accdeneme.AccelerometerExample;
 import exp1.sensor.oda114.sensorapp6.camera.TakePhotoActivity;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivity;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
@@ -214,6 +215,12 @@ public static final String TAG = "Bu Uygulama";
     }
     public void openCamera (View view){
         Intent inIntent = new Intent(getApplicationContext(), FeatureDetectionOnPhotoActivity.class);
+//        inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
+        startActivity(inIntent);
+
+    }
+    public void xDirectionMovement (View view){
+        Intent inIntent = new Intent(getApplicationContext(), AccelerometerExample.class);
 //        inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
         startActivity(inIntent);
 

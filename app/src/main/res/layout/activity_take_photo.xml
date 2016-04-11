@@ -29,5 +29,12 @@
         android:layout_height="wrap_content"
         android:src="@drawable/ic_action_search" >
     </ImageView>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text=""
+        android:id="@+id/txtMeasure"
+        android:layout_gravity="center_vertical" />
 
 </LinearLayout>
