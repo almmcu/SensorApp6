@@ -28,6 +28,7 @@ public class AccelerometerExample extends AppCompatActivity  implements SensorEv
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_accelerometer_example);
 
+
         SensorManager manager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         Sensor accelerometer = manager.getSensorList(Sensor.TYPE_ACCELEROMETER).get(0);
         manager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
