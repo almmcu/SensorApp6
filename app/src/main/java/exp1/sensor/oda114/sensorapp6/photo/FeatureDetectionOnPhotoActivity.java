@@ -193,7 +193,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                             double x1 = keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x;
                             double x2 = keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x;
                             double fark = x1 - x2 ;
-                            if (!neTaraf) fark = x2 - x2 ; // Eğer neTaraf değişkeni false ise sola hareket var, true ise sağa hareket var demektir.
+                            if (!neTaraf) fark = x2 - x1 ; // Eğer neTaraf değişkeni false ise sola hareket var, true ise sağa hareket var demektir.
 
 
 
