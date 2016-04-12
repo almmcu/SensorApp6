@@ -33,6 +33,7 @@ import java.util.ArrayList;
 import exp1.sensor.oda114.sensorapp6.R;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
+import exp1.sensor.oda114.sensorapp6.show.ShowDistanceActivity;
 
 public class TakePhotoActivity extends AppCompatActivity implements  SensorEventListener{
 
@@ -363,4 +364,6 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
+
+
 }

@@ -7,7 +7,7 @@ import java.util.Random;
 /**
  * Created by Oda on 24.3.2016.
  */
-public class Point {
+public class Point implements  java.io.Serializable {
     private double x = 0;
     private double y = 0;
     private int cluster_number = 0;

@@ -65,6 +65,11 @@
             android:name=".accdeneme.AccelerometerExample"
             android:label="@string/title_activity_accelerometer_example" >
         </activity>
+        <activity
+            android:name=".show.ShowDistanceActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar"
+            android:label="@string/title_activity_show_distance" >
+        </activity>
     </application>
 
 </manifest>

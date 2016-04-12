@@ -1,11 +1,13 @@
 package exp1.sensor.oda114.sensorapp6.photo;
 
 
+import android.content.Intent;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 
@@ -26,12 +28,14 @@ import org.opencv.imgcodecs.Imgcodecs;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
 import exp1.sensor.oda114.sensorapp6.R;
 import exp1.sensor.oda114.sensorapp6.dbscan.DBScanTest;
 import exp1.sensor.oda114.sensorapp6.kmeans.KMeans;
+import exp1.sensor.oda114.sensorapp6.show.ShowDistanceActivity;
 
 public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
@@ -47,6 +51,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
     private String imgPath1 = "", imgPath2 = "";
     ArrayList<Double> farkList ;
     boolean neTaraf = true;
+    HashMap<exp1.sensor.oda114.sensorapp6.kmeans.Point, Double> distMap = new HashMap<>();
 
     // Opencv Kontrol ve Kod yazma
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -240,6 +245,11 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         ort /=10000;
                         TextView txtDistance = (TextView) findViewById(R.id.txtDistance);
                         String output = "";
+
+                        double cm_5 = (0.34 * 5) / ort ;
+                        distMap.put(sceneKMeans.getClusters().get(i).centroid, cm_5);
+
+
                         output += "K-MEANS HESAPLAMASI İLE\n\n" +
                                         "5  cm = " + (0.34 * 5) / ort + "\n" +
                                         "10 cm = " + (0.34 * 10) / ort + "\n" +
@@ -254,15 +264,22 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                         sceneDBScanTest.applyDbscan();
                         objectDBScanTest.applyDbscan();
                         List<Double> ortList = new ArrayList<Double>();
+                        List<exp1.sensor.oda114.sensorapp6.kmeans.Point> pointList = new ArrayList<>();
                         try {
                             for (  i = 0; i < sceneDBScanTest.getTrl().size() ; i++ ){
                                 double ortalama = 0;
+                                double X = 0, Y = 0;
                                 for (int j = 0 ; j < sceneDBScanTest.getTrl().get(i).size(); j++){
-
                                     int index = sceneDBScanTest.getHset().indexOf(sceneDBScanTest.getTrl().get(0).get(j));
+                                    X += sceneDBScanTest.getHset().get(index).getX();
+                                    Y += sceneDBScanTest.getHset().get(index).getY();
                                     ortalama += farkList.get(index);
                                 }
                                 ortalama /= sceneDBScanTest.getTrl().get(i).size();
+                                X /=  sceneDBScanTest.getTrl().get(i).size();
+                                Y /= sceneDBScanTest.getTrl().get(i).size();
+                                exp1.sensor.oda114.sensorapp6.kmeans.Point p = new exp1.sensor.oda114.sensorapp6.kmeans.Point(X, Y);
+                                pointList.add(p);
                                 ortList.add(ortalama /10000);
                             }
                         } catch (Exception e) {
@@ -278,6 +295,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                                     "15 cm = " + (0.34 * 15) / ortList.get(i) + "\n" +
                                     "20 cm = " + (0.34 * 20) / ortList.get(i) + "\n"+
                                     "---------------\n";
+                            distMap.put(pointList.get(i), (0.34 * 5) / ortList.get(i));
                         }
 
                         System.out.println("DBSCAN UYGULANDI");
@@ -345,6 +363,18 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void showDistance2 (View view){
+        try {
+            Intent i = new Intent(FeatureDetectionOnPhotoActivity.this, ShowDistanceActivity.class);
+            i.putExtra("IMG_PATH_1", imgPath2);
+            i.putExtra("DİST_MAP", distMap);
+
+            startActivity(i);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void onResume() {

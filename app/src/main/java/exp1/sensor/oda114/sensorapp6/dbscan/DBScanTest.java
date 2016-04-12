@@ -13,7 +13,7 @@ import exp1.sensor.oda114.sensorapp6.kmeans.Point;
  */
 public class DBScanTest {
     public static int minpoints = 7;
-    public static double tdistance = 20;
+    public static double tdistance = 200;
     public  double x1;
     public  double y1;
     public  Vector<Point> hset = new Vector<Point>();

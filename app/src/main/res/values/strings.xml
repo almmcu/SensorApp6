@@ -13,4 +13,5 @@
     </string>
     <string name="title_activity_take_photo">TakePhotoActivity</string>
     <string name="title_activity_accelerometer_example">AccelerometerExample</string>
+    <string name="title_activity_show_distance">ShowDistanceActivity</string>
 </resources>

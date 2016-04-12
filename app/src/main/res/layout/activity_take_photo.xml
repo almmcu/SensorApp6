@@ -38,4 +38,6 @@
         android:id="@+id/txtMeasure"
         android:layout_gravity="center_vertical" />
 
+
+
 </LinearLayout>
