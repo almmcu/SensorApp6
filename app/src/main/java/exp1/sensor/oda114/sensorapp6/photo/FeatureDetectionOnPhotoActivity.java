@@ -14,17 +14,20 @@ import android.widget.TextView;
 import org.opencv.android.BaseLoaderCallback;
 import org.opencv.android.LoaderCallbackInterface;
 import org.opencv.android.OpenCVLoader;
+import org.opencv.core.CvType;
 import org.opencv.core.DMatch;
 import org.opencv.core.KeyPoint;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfDMatch;
 import org.opencv.core.MatOfKeyPoint;
 import org.opencv.core.Point;
+import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.features2d.DescriptorExtractor;
 import org.opencv.features2d.DescriptorMatcher;
 import org.opencv.features2d.FeatureDetector;
 import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.video.KalmanFilter;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -300,6 +303,15 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
                         System.out.println("DBSCAN UYGULANDI");
                         txtDistance.setText(output);
+                        KalmanFilter kalman = new KalmanFilter(4, 2, 0, CvType.CV_32F);
+                        Mat transitionMatrix = new Mat(4, 4, CvType.CV_32F, new Scalar(0));
+                        float[] tM = { 1, 0, 1, 0,
+                                0, 1, 0, 1,
+                                0, 0, 1, 0,
+                                0, 0, 0, 1 } ;
+                        transitionMatrix.put(0, 0, tM);
+                        kalman.set_transitionMatrix(transitionMatrix);
+                        System.out.println(tM);
                         // Bu kısımları yorum satırına almamızın nedeni bu kısımları henüz kullanma ihtiyacı hisstmediimizden kaynaklanmakta.
                        /* try {
                        obj.fromList(objList);

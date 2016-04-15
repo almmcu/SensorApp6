@@ -352,7 +352,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
             float angularYSpeed = event.values[1];
             float angularZSpeed = event.values[2];//*/
 
-            anlikMesurement.add( (double) xChange);
+            anlikMesurement.add( (double) event.values[0]);
             passedTime.add((double) timediff );
             currentTimeinMilisecoond = System.currentTimeMillis();
         }
