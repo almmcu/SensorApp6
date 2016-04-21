@@ -65,7 +65,7 @@ public class ShowDistanceActivity extends AppCompatActivity {
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            layout.setX((float) key.getX() - 100);
+            layout.setX((float) key.getX() - 140);
             layout.setY((float) key.getY() - 40);
             layout.setBackground(getDrawable(R.drawable.text_bg));
             layout.addView(txtMeasure);
