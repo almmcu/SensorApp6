@@ -303,7 +303,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
 
                         System.out.println("DBSCAN UYGULANDI");
                         txtDistance.setText(output);
-                        KalmanFilter kalman = new KalmanFilter(4, 2, 0, CvType.CV_32F);
+                        /*KalmanFilter kalman = new KalmanFilter(4, 2, 0, CvType.CV_32F);
                         Mat transitionMatrix = new Mat(4, 4, CvType.CV_32F, new Scalar(0));
                         float[] tM = { 1, 0, 1, 0,
                                 0, 1, 0, 1,
@@ -311,7 +311,7 @@ public class FeatureDetectionOnPhotoActivity extends AppCompatActivity {
                                 0, 0, 0, 1 } ;
                         transitionMatrix.put(0, 0, tM);
                         kalman.set_transitionMatrix(transitionMatrix);
-                        System.out.println(tM);
+                        System.out.println(tM);*/
                         // Bu kısımları yorum satırına almamızın nedeni bu kısımları henüz kullanma ihtiyacı hisstmediimizden kaynaklanmakta.
                        /* try {
                        obj.fromList(objList);
