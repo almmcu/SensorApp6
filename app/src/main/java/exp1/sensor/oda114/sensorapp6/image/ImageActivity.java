@@ -86,8 +86,8 @@ public class ImageActivity extends AppCompatActivity {
         Intent i = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity2.class);
         //imgPath1 = "3mv5o4tbdhn41o7ovp0cm9d5seLEFT.jpg";
         //imgPath2 = "3mv5o4tbdhn41o7ovp0cm9d5seRİGHT.jpg";
-       imgPath1 = "2ss3ues56f97baieeg25a2p684LEFT.jpg";
-        imgPath2 = "2ss3ues56f97baieeg25a2p684RİGHT.jpg";
+       //imgPath1 = "2ss3ues56f97baieeg25a2p684LEFT.jpg";
+        //imgPath2 = "2ss3ues56f97baieeg25a2p684RİGHT.jpg";
         i.putExtra("IMG_PATH_1", imgPath1);
         i.putExtra("IMG_PATH_2", imgPath2);
         i.putExtra("NE_TARAF", neTaraf);
