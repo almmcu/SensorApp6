@@ -31,6 +31,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 
 import exp1.sensor.oda114.sensorapp6.R;
+import exp1.sensor.oda114.sensorapp6.image.ImageActivity;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
 import exp1.sensor.oda114.sensorapp6.show.ShowDistanceActivity;
@@ -106,7 +107,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
         str_SaveFolderName = Environment
                 .getExternalStorageDirectory()
                 .getAbsolutePath()
-                + "/AutoExperiment";
+                + "/AutoExperiment2";
         str_Camera_Photo_ImageName = str_randomnumber;
         wallpaperDirectory = new File(str_SaveFolderName);
         if (!wallpaperDirectory.exists())
@@ -185,7 +186,15 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
                 System.out.println(anlikMesafeler);
                 System.out.println(toplamMesafe);
                 TextView txtMeasure = (TextView) findViewById(R.id.txtMeasure);
-                txtMeasure.setText("Geçen mesafe: " + toplamMesafe + "\n\n" + direction[0] );
+                txtMeasure.setText("Geçen mesafe: " + toplamMesafe + "\n\n" + direction[0]);
+
+                Intent i = new Intent(TakePhotoActivity.this, ImageActivity.class);
+                i.putExtra("IMG_PATH_1", image1);
+                i.putExtra("IMG_PATH_2", image2);
+                i.putExtra("NE_TARAF", neTaraf);
+
+                startActivity(i);
+
             }else   btnCalculate.setVisibility(View.GONE);
         }
     }

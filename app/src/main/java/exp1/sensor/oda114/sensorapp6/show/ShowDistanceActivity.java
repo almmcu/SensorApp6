@@ -44,7 +44,7 @@ public class ShowDistanceActivity extends AppCompatActivity {
             imgPath1  = (String) savedInstanceState.getSerializable("IMG_PATH_1");
 
         }
-        String path = Environment.getExternalStorageDirectory() + "/AutoExperiment/" + imgPath1;
+        String path = Environment.getExternalStorageDirectory() + "/AutoExperiment2/" + imgPath1;
         BitmapDrawable d = new BitmapDrawable(path);
         relativeLayout = (RelativeLayout) findViewById(R.id.showRelativelayout);
         relativeLayout.setBackgroundDrawable(d);
@@ -65,8 +65,8 @@ public class ShowDistanceActivity extends AppCompatActivity {
             LinearLayout layout = new LinearLayout(this);
             layout.setOrientation(LinearLayout.VERTICAL);
             layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-            layout.setX((float) key.getX() - 140);
-            layout.setY((float) key.getY() - 40);
+            layout.setX((float) (key.getX() / 1.275));
+            layout.setY((float) (key.getY() / 1.1475));
             layout.setBackground(getDrawable(R.drawable.text_bg));
             layout.addView(txtMeasure);
 
