@@ -194,6 +194,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
                 i.putExtra("NE_TARAF", neTaraf);
 
                 startActivity(i);
+                finish();
 
             }else   btnCalculate.setVisibility(View.GONE);
         }

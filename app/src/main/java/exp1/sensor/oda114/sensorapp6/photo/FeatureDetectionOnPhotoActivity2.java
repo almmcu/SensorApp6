@@ -95,7 +95,7 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
 
 
                         Rect roi = new Rect(X, Y, WIDTH, HEIGHT);
-                        Mat cropped = new Mat(image2, roi);
+                        Mat cropped = new Mat(image1, roi);
                         Mat outputImage1 = cropped.clone();
 
 
@@ -113,7 +113,7 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                             roi = new Rect(X, Y, 3264 - X, HEIGHT); // WIDHT = 3264 - X
                         }
 
-                        cropped = new Mat(image1, roi);
+                        cropped = new Mat(image2, roi);
                         Mat outputImage2 = cropped.clone();
 
                         // Kesilen resimler
@@ -280,13 +280,13 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
 
                                 // objList değerleri ekleniyor
 
-                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y);
+                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y + Y);
                                 objKMeans.getPoints().add(point);
                                 objectDBScanTest.getHset().add(point);
 
                                 // sceneList değerleri ekleniyor
 
-                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x +X, keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.y);
+                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x +X, keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.y+ Y);
                                 sceneKMeans.getPoints().add(point);
                                 sceneDBScanTest.getHset().add(point);
                             }
@@ -427,9 +427,9 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
     public void showDistance3 (View view){
         try {
             Intent i = new Intent(FeatureDetectionOnPhotoActivity2.this, ShowDistanceActivity.class);
-            i.putExtra("IMG_PATH_1", imgPath2);
+            i.putExtra("IMG_PATH_1", imgPath1);
             i.putExtra("DİST_MAP", distMap);
-
+            finish();
             startActivity(i);
         } catch (Exception e) {
             e.printStackTrace();

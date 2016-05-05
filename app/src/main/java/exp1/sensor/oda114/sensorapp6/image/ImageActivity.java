@@ -79,23 +79,27 @@ public class ImageActivity extends AppCompatActivity {
         int y = (int)event.getY();
         X = (int)(x*1.275) - 300;
         Y = (int)(y*1.1475) - 200;
-
+        final int action = event.getAction();
         if  (X < 0 )  X = 0;
         if  (Y < 0 )  Y = 0;
 
-        Intent i = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity2.class);
-        //imgPath1 = "3mv5o4tbdhn41o7ovp0cm9d5seLEFT.jpg";
-        //imgPath2 = "3mv5o4tbdhn41o7ovp0cm9d5seRİGHT.jpg";
-       //imgPath1 = "2ss3ues56f97baieeg25a2p684LEFT.jpg";
-        //imgPath2 = "2ss3ues56f97baieeg25a2p684RİGHT.jpg";
-        i.putExtra("IMG_PATH_1", imgPath1);
-        i.putExtra("IMG_PATH_2", imgPath2);
-        i.putExtra("NE_TARAF", neTaraf);
-        i.putExtra("X", X);
-        i.putExtra("Y", Y);
-        startActivity(i);
-        Toast.makeText(getApplicationContext(), "x:" + (int) (x * 1.275) + "\ny:  " + (int) (y * 1.1475), Toast.LENGTH_SHORT).show();
-        finish();
+        if(action == MotionEvent.ACTION_DOWN) {
+            Intent i = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity2.class);
+            //imgPath1 = "3mv5o4tbdhn41o7ovp0cm9d5seLEFT.jpg";
+            //imgPath2 = "3mv5o4tbdhn41o7ovp0cm9d5seRİGHT.jpg";
+            //imgPath1 = "o9o6ethrg1h41qgmohb9i9omjfLEFT.jpg";
+            //imgPath2 = "o9o6ethrg1h41qgmohb9i9omjfRİGHT.jpg";
+            i.putExtra("IMG_PATH_1", imgPath1);
+            i.putExtra("IMG_PATH_2", imgPath2);
+            i.putExtra("NE_TARAF", neTaraf);
+            i.putExtra("X", X);
+            i.putExtra("Y", Y);
+            startActivity(i);
+
+            Toast.makeText(getApplicationContext(), "x:" + (int) (x * 1.275) + "\ny:  " + (int) (y * 1.1475), Toast.LENGTH_SHORT).show();
+        }
+
+
 
  /*
         try {
@@ -132,7 +136,7 @@ public class ImageActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();
         }*/
-        return false;
+        return super.onTouchEvent(event);
     }
 
 
