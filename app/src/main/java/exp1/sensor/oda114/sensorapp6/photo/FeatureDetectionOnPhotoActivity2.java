@@ -41,8 +41,8 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
     //public static final String TAG = "Photo Activity ";
     MatOfKeyPoint keyPoints;
     MatOfKeyPoint logokeyPoints;
-    public static final int WIDTH = 600;
-    public static final int HEIGHT = 400;
+    public static final int WIDTH = 300;
+    public static final int HEIGHT = 300;
 
     List<DMatch> matchesList;
     DescriptorMatcher matcher;
@@ -104,10 +104,13 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                         // Bundan dolayı 0 dan dokunulan X değerine kadar olan kısıma bakılalı
                         // neTaraf değişkeni true eğer hareket sağa yapılmışsa
                         // neTaraf değişkeni fase eğer hareket sola yapılmışsa
-
+                        int x =0;
 
                         if (neTaraf){
-                            roi = new Rect(0, Y, X + 300, HEIGHT); // WIDHT = X + 300
+                            x = X - 400;
+                            if (x < 0) x = 0;
+                            roi = new Rect(X-(300+WIDTH), Y, X, HEIGHT); // WIDHT = X + 300
+                            roi = new Rect(x, Y, 500, HEIGHT); // WIDHT = X + 300
                         }
                         else{
                             roi = new Rect(X, Y, 3264 - X, HEIGHT); // WIDHT = 3264 - X
@@ -208,7 +211,7 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                         // En yakın mesafenin 2 katı büyüklüğünde olan bütün mesafeler alınıyor.
 
                         for (int i = 0; i < descriptors.rows(); i++) {
-                            if (matchesList.get(i).distance < 2 * min_dist) {
+                            if (matchesList.get(i).distance < 2.5 * min_dist) {
                                 good_matches.addLast(matchesList.get(i));
                             }
                         }
@@ -269,9 +272,11 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
 
                             double x1 = keypoints_sceneList.get(good_matches.get(i).trainIdx).pt.x;
                             double x2 = keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x;
-                            double fark = x1 +X - x2 ;
 
-                            if (!neTaraf) fark = x2 - x1 +X ; // Eğer neTaraf değişkeni false ise sola hareket var, true ise sağa hareket var demektir.
+                            x1 += X;
+                            x2 += x;
+                            double fark = x1 - x2 ;
+                            if (!neTaraf) fark = x2 - x1  ; // Eğer neTaraf değişkeni false ise sola hareket var, true ise sağa hareket var demektir.
 
                             if ((fark) >= 0) {
                                 ort += (fark) ;
@@ -280,7 +285,7 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
 
                                 // objList değerleri ekleniyor
 
-                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y + Y);
+                                point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x + x , keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y + Y);
                                 objKMeans.getPoints().add(point);
                                 objectDBScanTest.getHset().add(point);
 
@@ -303,15 +308,17 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                         objKMeans.init();
                         objKMeans.calculate();
 
-                        sceneKMeans.init();
+                        sceneKMeans.init(X + 150 , Y + 150 );
                         sceneKMeans.calculate();
 
 
                         int i = sceneKMeans.clusterQuality(sceneKMeans);
                         ort = 0;
+                        ArrayList<Double> farkListesi = new ArrayList<>();
                         for (int j = 0; j < sceneKMeans.getClusters().get(i).getPoints().size(); j ++){
                             int index = sceneKMeans.getPoints().indexOf( sceneKMeans.getClusters().get(i).getPoints().get(j));
                             ort += farkList.get(index);
+                            farkListesi.add(farkList.get(index));
                             System.out.println(index);
                         }
                         ort = ort / sceneKMeans.getClusters().get(i).getPoints().size();
@@ -320,8 +327,20 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                         String output = "";
 
                         double cm_5 = (0.34 * 5) / ort ;
-                        distMap.put(sceneKMeans.getClusters().get(i).centroid, cm_5);
 
+                        distMap.put(sceneKMeans.getClusters().get(i).centroid, cm_5);
+/**
+ * İlk cluster daki bulunan noktaların fark değerleri
+ * */
+                        ArrayList<Double> farkListesiIlkCluster = new ArrayList<>();
+                        for (int j = 0; j < sceneKMeans.getClusters().get(0).getPoints().size(); j ++){
+                            int index = sceneKMeans.getPoints().indexOf( sceneKMeans.getClusters().get(0).getPoints().get(j));
+
+                            farkListesiIlkCluster.add(farkList.get(index));
+
+                        }
+                        System.out.println(farkListesi);
+                        System.out.println(farkListesiIlkCluster);
 
                         output += "K-MEANS HESAPLAMASI İLE\n\n" +
                                 "5  cm = " + (0.34 * 5) / ort + "\n" +

@@ -38,7 +38,7 @@ public class KMeans {
     public static void main(String[] args) {
 
         KMeans kmeans = new KMeans();
-        kmeans.init();
+        kmeans.init(3,5);
         kmeans.calculate();
     }
 
@@ -51,7 +51,7 @@ public class KMeans {
     }
 
     //Initializes the process
-    public void init() {
+    public void init(int x, int y) {
 
        /* BufferedReader br = null;
         try {
@@ -77,10 +77,31 @@ public class KMeans {
 
         //Create Clusters
         //Set Random Centroids
+
         for (int i = 0; i < NUM_CLUSTERS; i++) {
             Cluster cluster = new Cluster(i);
             //Point centroid = Point.createRandomPoint(MIN_COORDINATE,MAX_COORDINATE);
-            Point centroid = points.get(i);
+            Point centroid;
+
+            if (i ==0 ) centroid = new Point(x, y);
+            else   centroid = points.get(i);
+
+            cluster.setCentroid(centroid);
+            clusters.add(cluster);
+        }
+
+        //Print Initial state
+        plotClusters();
+    }
+public void init() {
+
+        for (int i = 0; i < NUM_CLUSTERS; i++) {
+            Cluster cluster = new Cluster(i);
+            //Point centroid = Point.createRandomPoint(MIN_COORDINATE,MAX_COORDINATE);
+            Point centroid;
+
+            centroid = points.get(i);
+
             cluster.setCentroid(centroid);
             clusters.add(cluster);
         }
@@ -220,6 +241,7 @@ public class KMeans {
             System.out.println(d1);
 
             double d2 = d1 / kümeElemanSayısı;
+            if (d2 == 0) d2 = Integer.MAX_VALUE;
             distList.add(d2);
         }
         double enk = distList.get(0);

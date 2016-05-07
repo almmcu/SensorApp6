@@ -77,8 +77,8 @@ public class ImageActivity extends AppCompatActivity {
     public boolean onTouchEvent(MotionEvent event) {
         int x = (int)event.getX();
         int y = (int)event.getY();
-        X = (int)(x*1.275) - 300;
-        Y = (int)(y*1.1475) - 200;
+        X = (int)(x*1.275) - 150;
+        Y = (int)(y*1.1475) - 150;
         final int action = event.getAction();
         if  (X < 0 )  X = 0;
         if  (Y < 0 )  Y = 0;
