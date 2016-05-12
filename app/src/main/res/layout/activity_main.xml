@@ -29,6 +29,27 @@
         android:text="Open Camera"
         android:onClick="openCamera"
         android:id="@+id/btnCamera"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Camera Kontröllü Deney"
+        android:onClick="openCameraControl"
+        android:id="@+id/btnCameraKontrollu"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Camera with 3 Picture"
+        android:onClick="openCameraWithThreePicture"
+        android:id="@+id/btnCameraThreePicture"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Open Camera with 4 Picture"
+        android:onClick="openCameraWithFourPicture"
+        android:id="@+id/btnCameraFourPicture"/>
+
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

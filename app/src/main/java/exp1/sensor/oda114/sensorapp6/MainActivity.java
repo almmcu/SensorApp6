@@ -215,8 +215,30 @@ public static final String TAG = "Bu Uygulama";
 
     }
     public void openCamera (View view){
-//        Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
-//        startActivity(inIntent);
+        Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
+        startActivity(inIntent);
+
+      /*  Intent i = new Intent(getApplicationContext(), ImageActivity.class);
+        i.putExtra("IMG_PATH_1", "1.jpg");
+        i.putExtra("IMG_PATH_2", "2.jpg");
+        i.putExtra("NE_TARAF", true);
+
+        startActivity(i);*/
+    }
+
+    public void openCameraWithThreePicture (View view){
+        Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
+        inIntent.putExtra("KAC_TANE", 3);
+        startActivity(inIntent);
+
+    }
+    public void openCameraWithFourPicture (View view){
+        Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
+        inIntent.putExtra("KAC_TANE", 4);
+        startActivity(inIntent);
+    }
+    public void openCameraControl (View view){
+
 
         Intent i = new Intent(getApplicationContext(), ImageActivity.class);
         i.putExtra("IMG_PATH_1", "1.jpg");
@@ -226,6 +248,7 @@ public static final String TAG = "Bu Uygulama";
         startActivity(i);
 
     }
+
     public void xDirectionMovement (View view){
         Intent inIntent = new Intent(getApplicationContext(), AccelerometerExample.class);
 //        inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);

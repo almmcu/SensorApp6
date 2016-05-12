@@ -54,6 +54,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
     public static final String TAG = "TAKE_PHOTO_ACTİVİTY";
     int counter4Images = 0;
     private String image1 = "", image2 = "";
+    private int KAC_TANE = 2;
     Button btnCalculate ;
     // Sensor kullanarak cihazın hareketini tahmin ediyor
     private SensorManager sMgr;
@@ -94,6 +95,17 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_take_photo);
+
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+            KAC_TANE = extras.getInt("KAC_TANE");
+            }
+        } else {
+            KAC_TANE = 2;
+        }
+
         this.imageView = (ImageView)this.findViewById(R.id.imageView1);
         btnCalculate = (Button) findViewById(R.id.btnCalculate);
         str_randomnumber = String.valueOf(nextSessionId());
@@ -168,7 +180,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
                 sMgr.registerListener(this, mLineerAccSensor, SensorManager.SENSOR_DELAY_NORMAL);
 
             }
-            if (counter4Images  == 2 ){
+            if (counter4Images  == KAC_TANE ){
                 sMgr.unregisterListener((SensorEventListener) this);
                 btnCalculate.setVisibility(View.VISIBLE);
 
