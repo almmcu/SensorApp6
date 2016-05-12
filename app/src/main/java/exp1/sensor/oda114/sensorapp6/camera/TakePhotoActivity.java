@@ -13,15 +13,12 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import org.opencv.android.CameraBridgeViewBase;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +29,7 @@ import java.util.ArrayList;
 
 import exp1.sensor.oda114.sensorapp6.R;
 import exp1.sensor.oda114.sensorapp6.image.ImageActivity;
-import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
-import exp1.sensor.oda114.sensorapp6.show.ShowDistanceActivity;
 
 public class TakePhotoActivity extends AppCompatActivity implements  SensorEventListener{
 
@@ -204,6 +199,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
                 i.putExtra("IMG_PATH_1", image1);
                 i.putExtra("IMG_PATH_2", image2);
                 i.putExtra("NE_TARAF", neTaraf);
+                i.putExtra("KAC_TANE", KAC_TANE);
 
                 startActivity(i);
                 finish();

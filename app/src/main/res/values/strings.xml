@@ -17,4 +17,6 @@
     <string name="title_activity_image">ImageActivity</string>
     <string name="title_activity_feature_detection_on_photo2">FeatureDetectionOnPhotoActivity2
     </string>
+    <string name="title_activity_feature_detection_on_photo3">FeatureDetectionOnPhotoActivity3
+    </string>
 </resources>

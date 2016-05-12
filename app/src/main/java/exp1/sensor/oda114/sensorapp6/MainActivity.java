@@ -10,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -27,13 +25,9 @@ import org.opencv.core.Scalar;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
-import exp1.sensor.oda114.sensorapp6.accdeneme.AccelerometerExample;
+import exp1.sensor.oda114.sensorapp6.accdeneme.AccelerometerFindDirection;
 import exp1.sensor.oda114.sensorapp6.camera.TakePhotoActivity;
 import exp1.sensor.oda114.sensorapp6.image.ImageActivity;
-import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivity;
-import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionActivityOnPhoto;
-import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
-import exp1.sensor.oda114.sensorapp6.photo.MyCameraActivity;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener,CameraBridgeViewBase.CvCameraViewListener {
 ///sdasefsadfasdfadfadf/**/
@@ -217,13 +211,6 @@ public static final String TAG = "Bu Uygulama";
     public void openCamera (View view){
         Intent inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
         startActivity(inIntent);
-
-      /*  Intent i = new Intent(getApplicationContext(), ImageActivity.class);
-        i.putExtra("IMG_PATH_1", "1.jpg");
-        i.putExtra("IMG_PATH_2", "2.jpg");
-        i.putExtra("NE_TARAF", true);
-
-        startActivity(i);*/
     }
 
     public void openCameraWithThreePicture (View view){
@@ -250,7 +237,7 @@ public static final String TAG = "Bu Uygulama";
     }
 
     public void xDirectionMovement (View view){
-        Intent inIntent = new Intent(getApplicationContext(), AccelerometerExample.class);
+        Intent inIntent = new Intent(getApplicationContext(), AccelerometerFindDirection.class);
 //        inIntent = new Intent(getApplicationContext(), TakePhotoActivity.class);
         startActivity(inIntent);
 

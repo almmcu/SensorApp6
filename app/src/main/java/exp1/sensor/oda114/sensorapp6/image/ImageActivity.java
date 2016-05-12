@@ -15,12 +15,14 @@ import android.widget.Toast;
 import exp1.sensor.oda114.sensorapp6.R;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity;
 import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity2;
+import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity3;
 
 public class ImageActivity extends AppCompatActivity {
 
     private String imgPath1 = "", imgPath2 = "";
     private int X, Y;
     boolean neTaraf = true;
+    private int KAC_TANE = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +35,8 @@ public class ImageActivity extends AppCompatActivity {
                 imgPath2 = extras.getString("IMG_PATH_1");
                 imgPath1 = extras.getString("IMG_PATH_2");
                 neTaraf = extras.getBoolean("NE_TARAF");
+                KAC_TANE = extras.getInt("KAC_TANE");
+
             }
         } else {
             imgPath2 = (String) savedInstanceState.getSerializable("IMG_PATH_1");
@@ -84,7 +88,12 @@ public class ImageActivity extends AppCompatActivity {
         if  (Y < 0 )  Y = 0;
 
         if(action == MotionEvent.ACTION_DOWN) {
-            Intent i = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity2.class);
+            Intent i ;
+            if (KAC_TANE > 2){
+               i  = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity3.class);
+            }else {
+                i = new Intent(ImageActivity.this, FeatureDetectionOnPhotoActivity2.class);
+            }
             //imgPath1 = "3mv5o4tbdhn41o7ovp0cm9d5seLEFT.jpg";
             //imgPath2 = "3mv5o4tbdhn41o7ovp0cm9d5seRİGHT.jpg";
             //imgPath1 = "o9o6ethrg1h41qgmohb9i9omjfLEFT.jpg";
@@ -94,6 +103,7 @@ public class ImageActivity extends AppCompatActivity {
             i.putExtra("NE_TARAF", neTaraf);
             i.putExtra("X", X);
             i.putExtra("Y", Y);
+            i.putExtra("KAC_TANE", KAC_TANE);
             startActivity(i);
 
             Toast.makeText(getApplicationContext(), "x:" + (int) (x * 1.275) + "\ny:  " + (int) (y * 1.1475), Toast.LENGTH_SHORT).show();

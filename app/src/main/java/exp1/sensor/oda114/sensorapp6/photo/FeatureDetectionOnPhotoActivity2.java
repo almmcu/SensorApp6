@@ -71,6 +71,7 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
                     File file1 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath1);
                     File file2 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath2);
                     Mat image1, image2;
+
 try {
     if (file1.exists() && file2.exists()) {
         // Resimleri Grayscale olarak okuma
