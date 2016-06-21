@@ -80,7 +80,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
     TextView txtAcc;
     StringBuilder builder = new StringBuilder();
     float [] history = new float[2];
-    public static final double X_THERESHOLD = 0.3;
+    public static final double X_THERESHOLD = 0.2;
     public static final double Y_THERESHOLD = 2.0;
     boolean neTaraf = true;
     String [] direction = {"NONE","NONE"};
@@ -138,6 +138,21 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
             str_Camera_Photo_ImagePath = str_SaveFolderName
                     + "/" + str_Camera_Photo_ImageName;
             image2 = str_Camera_Photo_ImageName;
+
+        }
+
+        if (counter4Images  == 2 ){
+            str_Camera_Photo_ImageName += "RİGHT3.jpg";
+            str_Camera_Photo_ImagePath = str_SaveFolderName
+                    + "/" + str_Camera_Photo_ImageName;
+
+
+        }
+        if (counter4Images  == 3 ){
+            str_Camera_Photo_ImageName += "RİGHT4.jpg";
+            str_Camera_Photo_ImagePath = str_SaveFolderName
+                    + "/" + str_Camera_Photo_ImageName;
+
 
         }
         counter4Images ++;
@@ -215,6 +230,7 @@ public class TakePhotoActivity extends AppCompatActivity implements  SensorEvent
         i.putExtra("IMG_PATH_2", image2);
         i.putExtra("NE_TARAF", neTaraf);
         startActivity(i);
+        
     }
 
 

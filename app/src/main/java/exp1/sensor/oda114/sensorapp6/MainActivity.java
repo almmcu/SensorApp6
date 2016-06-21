@@ -2,10 +2,13 @@ package exp1.sensor.oda114.sensorapp6;
 
 import android.content.Context;
 import android.content.Intent;
+import android.hardware.Camera;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
@@ -22,12 +25,14 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.Scalar;
 
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
 import exp1.sensor.oda114.sensorapp6.accdeneme.AccelerometerFindDirection;
 import exp1.sensor.oda114.sensorapp6.camera.TakePhotoActivity;
 import exp1.sensor.oda114.sensorapp6.image.ImageActivity;
+import exp1.sensor.oda114.sensorapp6.photo.FeatureDetectionOnPhotoActivity2;
 
 public class MainActivity extends AppCompatActivity implements SensorEventListener,CameraBridgeViewBase.CvCameraViewListener {
 ///sdasefsadfasdfadfadf/**/
@@ -55,6 +60,17 @@ public static final String TAG = "Bu Uygulama";
     ArrayList<Double> saniyelikMesurement = new ArrayList<>();
     ArrayList<Double> saniyelikMesafe = new ArrayList<>();
     ArrayList<ArrayList<Double>> accValueMap = new ArrayList<>();
+
+
+    Camera mcamera;
+    int focul_length;
+    Camera.Parameters params;
+    File mFile;
+
+    public int PICTURE_ACTIVITY_CODE = 1;
+    public String FILENAME = "sdcard/photo.jpg";
+    Camera.Parameters cameraParameters;
+
    // static{System.loadLibrary("opencv_java3"); }
     //static{ System.loadLibrary("opencv_java"); }
     @Override
@@ -63,7 +79,8 @@ public static final String TAG = "Bu Uygulama";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         try {
-
+            mcamera = Camera.open();
+           // launchTakePhoto();
            /* Mat m = new Mat(5, 10, CvType.CV_8UC1, new Scalar(0));
             System.out.println(m.toString());*/
             sMgr = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -87,6 +104,20 @@ public static final String TAG = "Bu Uygulama";
     public void onSensorChanged(SensorEvent event) {
 
     }*/
+
+
+    private void launchTakePhoto()
+    {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        cameraParameters = mcamera.getParameters();
+        Camera.CameraInfo myinfo = new Camera.CameraInfo();
+        float l=cameraParameters.getFocalLength(); // Here its creating Null Pointer Exception
+        mFile = new File(FILENAME);
+        System.out.println("My Focul Length:--"+l);
+        Uri outputFileUri = Uri.fromFile(mFile);
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, outputFileUri);
+        startActivityForResult(intent, PICTURE_ACTIVITY_CODE);
+    }
 
 
 
@@ -228,9 +259,15 @@ public static final String TAG = "Bu Uygulama";
 
 
         Intent i = new Intent(getApplicationContext(), ImageActivity.class);
-        i.putExtra("IMG_PATH_1", "1.jpg");
-        i.putExtra("IMG_PATH_2", "2.jpg");
+        String path = "deneylerr/";
+        String klasor = "4/";
+        String imgg1= "0.jpg";
+        String imgg2 = "5.jpg";
+        i.putExtra("IMG_PATH_1", path + klasor + imgg1);
+        i.putExtra("IMG_PATH_2", path    + klasor + imgg2);
         i.putExtra("NE_TARAF", true);
+        i.putExtra("KAC_TANE", 2);
+
 
         startActivity(i);
 

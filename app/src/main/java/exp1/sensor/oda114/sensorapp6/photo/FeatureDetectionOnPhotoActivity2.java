@@ -94,6 +94,15 @@ try {
 
         // Birinci resmi crop etme
 
+        /**
+         *
+         * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+         *
+         * Bu iki satırı algoritmaları karşılaştırdıktan sonra sil
+         * */
+
+        // X = 875;
+       // Y = 1330;
 
         Rect roi = new Rect(X, Y, WIDTH, HEIGHT);
         Mat cropped = new Mat(image1, roi);
@@ -124,6 +133,8 @@ try {
         System.out.println(outputImage1);
         System.out.println(outputImage2);
 
+        // hız kontrolu yapmak için
+        // compareAlgorithm(image1, image2, "BRISK");
 
         /**
          * Keypoints ve bunlardan elde edilecek descriptorların hesaplanması
@@ -366,8 +377,9 @@ try {
         System.out.println(enYakınNoktaIndex);
         System.out.println(enYakınNoktaDisparity);
         distMap.put(sceneKMeans.getClusters().get(0).centroid, (0.34 * 5) / enYakınNoktaDisparity * 10000);
+        int baseline = 15;
         output += "HESAPLAMASI SONRASI\n\n" +
-                "Uzaklık = " + (0.34 * 5) / ort + "    ---- " + (0.34 * 5) / enYakınNoktaDisparity * 10000 + "\n" +
+                "Uzaklık = " + (0.34 * baseline) / ort + "    ---- " + (0.34 * baseline) / enYakınNoktaDisparity * 10000 + "\n" +
                                 /*"10 cm = " + (0.34 * 10) / ort + "\n" +
                                 "15 cm = " + (0.34 * 15) / ort + "\n" +
                                 "20 cm = " + (0.34 * 20) / ort +*/
@@ -485,6 +497,89 @@ try {
         }
     }
 
+    private long compareAlgorithm(Mat image_1, Mat image_2, String algorithm){
+
+        FeatureDetector DETECTOR_ALGRITHM ;
+        DescriptorExtractor DESCRIPTOR_EXTRACTOR ;
+
+        MatOfKeyPoint keyPoints_ = new MatOfKeyPoint();
+        MatOfKeyPoint logokeyPoints_ = new MatOfKeyPoint();
+
+        Mat descriptors_ = new Mat();
+        Mat logoDescriptors_ = new Mat();
+
+        long currentTimeinMilisecoond  = 0;
+        long temp = 0 ;
+        long timediff_detector = 0;
+        long timediff_descriptor = 0;
+
+        if (algorithm.equals("SURF")) {
+            DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.SURF);
+            DESCRIPTOR_EXTRACTOR = DescriptorExtractor
+                    .create(DescriptorExtractor.SURF);
+        }
+
+        else if (algorithm.equals("SIFT")){
+            DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.SIFT);
+            DESCRIPTOR_EXTRACTOR = DescriptorExtractor
+                    .create(DescriptorExtractor.SIFT);
+        }
+
+        else if (algorithm.equals("ORB")) {
+            DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.ORB);
+            DESCRIPTOR_EXTRACTOR = DescriptorExtractor
+                    .create(DescriptorExtractor.ORB);
+        }
+
+        else {
+            DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.BRISK);
+            DESCRIPTOR_EXTRACTOR = DescriptorExtractor
+                    .create(DescriptorExtractor.BRISK);
+        }
+
+        DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.SURF);
+        DESCRIPTOR_EXTRACTOR = DescriptorExtractor
+                .create(DescriptorExtractor.ORB);
+
+        currentTimeinMilisecoond = System.currentTimeMillis();
+        /**
+         *
+         *  Detect
+         * */
+        DETECTOR_ALGRITHM.detect(image_2, keyPoints_); // 2. çekilen resim için
+        DETECTOR_ALGRITHM.detect(image_1, logokeyPoints_); // 1. çekilen resim için
+
+        temp = System.currentTimeMillis();
+        timediff_detector = currentTimeinMilisecoond - temp;
+        /**
+         *
+         *  Extract
+         * */
+
+
+        currentTimeinMilisecoond = System.currentTimeMillis();
+
+        DESCRIPTOR_EXTRACTOR.compute(image_2, keyPoints_, descriptors_);
+        DESCRIPTOR_EXTRACTOR.compute(image_1, logokeyPoints_, logoDescriptors_);
+
+        temp = System.currentTimeMillis();
+        timediff_descriptor = currentTimeinMilisecoond - temp;
+
+
+        System.out.println(timediff_detector);
+        System.out.println(timediff_descriptor);
+
+        // Ne kadar nokta bulunmuş
+
+        Size keyPointLogo_ = logokeyPoints_.size();
+        Size keyPoint_ = keyPoints_.size();
+
+        System.out.println(keyPointLogo_);
+        System.out.println(keyPoint_);
+
+
+        return 0;
+    }
     @Override
     public void onResume() {
         super.onResume();

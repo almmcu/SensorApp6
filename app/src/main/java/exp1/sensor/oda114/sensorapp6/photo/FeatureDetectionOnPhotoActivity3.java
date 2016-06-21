@@ -61,6 +61,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
     HashMap<Point, Double> distMap = new HashMap<>();
     private int KAC_TANE = 2;
     MatOfKeyPoint logokeyPoints3, logokeyPoints4;
+    private int BASE_LINE = 5;
     // Opencv Kontrol ve Kod yazma
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -82,13 +83,15 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                     Mat image3, image4;
                     File file3 = null, file4 = null;
                     if (KAC_TANE > 2) {
-                        file3 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath2+"3");
+
+                        file3 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath2.substring(0, imgPath2.length() - 4)+"3.jpg");
                     }
                     if (KAC_TANE == 4){
-                        file4 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath2+"4");
+
+                        file4 = new File(Environment.getExternalStorageDirectory(), "AutoExperiment2/" + imgPath2.substring(0, imgPath2.length() - 4)+"4.jpg");
                     }
                     try {
-                        if (file1.exists() && file2.exists() && file3.exists() && file4.exists()) {
+                        if (file1.exists() && file2.exists() && file3.exists()) {
                             // Resimleri Grayscale olarak okuma
 
                             /**
@@ -98,6 +101,8 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                              * */
                             image1 = Imgcodecs.imread(file1.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
                             image2 = Imgcodecs.imread(file2.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
+                            image3 = Imgcodecs.imread(file2.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
+                            image4 = Imgcodecs.imread(file2.getAbsolutePath(), Imgcodecs.IMREAD_GRAYSCALE);
 
                             /**
                              * Eğer 2 den fazla resim çekilmiş ise
@@ -153,11 +158,11 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                             Mat outputImage3 = null, outputImage4 = null;
                             if (KAC_TANE > 2){
 
-                                cropped = new Mat(image2, roi);
+                                cropped = new Mat(image3, roi);
                                 outputImage3 = cropped.clone();
                             }
                             if(KAC_TANE == 4){
-                                cropped = new Mat(image2, roi);
+                                cropped = new Mat(image4, roi);
                                 outputImage4 = cropped.clone();
                             }
                             // Kesilen resimler
@@ -308,11 +313,12 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
 
                             max_dist = 0;
                             min_dist = 1000;
-
+                            good_matches3 = new LinkedList<>();
+                            good_matches4 = new LinkedList<>();
                             if (KAC_TANE > 2){
 
                                 try {
-                                    matcher.match(descriptors, logoDescriptors3, matches);
+                                    matcher.match(logoDescriptors3, logoDescriptors, matches);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -322,7 +328,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
 
                                 // En uzak ve En yakın mesafeler hesaplanıyor.
 
-                                for (int i = 0; i < descriptors.rows(); i++) {
+                                for (int i = 0; i < logoDescriptors3.rows(); i++) {
                                     Double dist = (double) matchesList.get(i).distance;
                                     if (dist < min_dist) min_dist = dist;
                                     if (dist > max_dist) max_dist = dist;
@@ -331,7 +337,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                                 // En iyi eşleşen noktalar bulunuyor.
                                 // En yakın mesafenin 2 katı büyüklüğünde olan bütün mesafeler alınıyor.
 
-                                for (int i = 0; i < descriptors.rows(); i++) {
+                                for (int i = 0; i < logoDescriptors3.rows(); i++) {
                                     if (matchesList.get(i).distance < 2.5 * min_dist) {
                                         good_matches3.addLast(matchesList.get(i));
                                     }
@@ -342,7 +348,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                             if(KAC_TANE == 4){
 
                                 try {
-                                    matcher.match(descriptors, logoDescriptors4, matches);
+                                    matcher.match(logoDescriptors, logoDescriptors4, matches);
 
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -352,7 +358,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
 
                                 // En uzak ve En yakın mesafeler hesaplanıyor.
 
-                                for (int i = 0; i < descriptors.rows(); i++) {
+                                for (int i = 0; i < logoDescriptors4.rows(); i++) {
                                     Double dist = (double) matchesList.get(i).distance;
                                     if (dist < min_dist) min_dist = dist;
                                     if (dist > max_dist) max_dist = dist;
@@ -361,7 +367,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                                 // En iyi eşleşen noktalar bulunuyor.
                                 // En yakın mesafenin 2 katı büyüklüğünde olan bütün mesafeler alınıyor.
 
-                                for (int i = 0; i < descriptors.rows(); i++) {
+                                for (int i = 0; i < logoDescriptors4.rows(); i++) {
                                     if (matchesList.get(i).distance < 2.5 * min_dist) {
                                         good_matches4.addLast(matchesList.get(i));
                                     }
@@ -390,10 +396,10 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                              * */
                             List<KeyPoint> keypoints_objectList3 = null ;
                             List<KeyPoint> keypoints_objectList4 = null ;
-                            LinkedList<org.opencv.core.Point> sceneList3 = null;
-                            LinkedList<org.opencv.core.Point> sceneList4 = null;
-                            LinkedList<org.opencv.core.Point> objList3 = null;
-                            LinkedList<org.opencv.core.Point> objList4 = null;
+                            LinkedList<org.opencv.core.Point> sceneList3 =  new LinkedList<>();;
+                            LinkedList<org.opencv.core.Point> sceneList4 =  new LinkedList<>();;
+                            LinkedList<org.opencv.core.Point> objList3 =  new LinkedList<>();;
+                            LinkedList<org.opencv.core.Point> objList4 =  new LinkedList<>();;
                             if (KAC_TANE > 2){
 
                                 keypoints_objectList3 = logokeyPoints3.toList();
@@ -630,9 +636,9 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                             System.out.println(enYakınNokta);
                             System.out.println(enYakınNoktaIndex);
                             System.out.println(enYakınNoktaDisparity);
-                            distMap.put(sceneKMeans.getClusters().get(0).centroid, (0.34 * 5) / enYakınNoktaDisparity * 10000);
+                            distMap.put(sceneKMeans.getClusters().get(0).centroid, (0.34 * BASE_LINE) / enYakınNoktaDisparity * 10000);
                             output += "HESAPLAMASI SONRASI\n\n" +
-                                    "Uzaklık = " + (0.34 * 5) / ort + "    ---- " + (0.34 * 5) / enYakınNoktaDisparity * 10000 + "\n" +
+                                    "Uzaklık = " + (0.34 * BASE_LINE) / ort + "    ---- " + (0.34 * BASE_LINE) / enYakınNoktaDisparity * 10000 + "\n" +
                                 /*"10 cm = " + (0.34 * 10) / ort + "\n" +
                                 "15 cm = " + (0.34 * 15) / ort + "\n" +
                                 "20 cm = " + (0.34 * 20) / ort +*/
@@ -673,12 +679,12 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                             System.out.println(ortList);
                             for (i = 0; i < ortList.size(); i++) {
                                 output +=
-                                        "5  cm = " + (0.34 * 5) / ortList.get(i) + "\n" +
+                                        "5  cm = " + (0.34 * BASE_LINE) / ortList.get(i) + "\n" +
                                                 "10 cm = " + (0.34 * 10) / ortList.get(i) + "\n" +
                                                 "15 cm = " + (0.34 * 15) / ortList.get(i) + "\n" +
                                                 "20 cm = " + (0.34 * 20) / ortList.get(i) + "\n" +
                                                 "---------------\n";
-                                distMap.put(pointList.get(i), (0.34 * 5) / ortList.get(i));
+                                distMap.put(pointList.get(i), (0.34 * BASE_LINE) / ortList.get(i));
                             }
 
                             System.out.println("DBSCAN UYGULANDI");
@@ -694,8 +700,10 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                             sceneKMeans3.init(X + 150, Y + 150);
                             sceneKMeans3.calculate();
 
-                            sceneKMeans4.init(X + 150, Y + 150);
-                            sceneKMeans4.calculate();
+                            if (KAC_TANE == 4) {
+                                sceneKMeans4.init(X + 150, Y + 150);
+                                sceneKMeans4.calculate();
+                            }
                             ArrayList<Double> farkListesiIlkCluster3 = new ArrayList<>();
                             ArrayList<Double> farkListesiIlkCluster4 = new ArrayList<>();
                             if (KAC_TANE > 2){
@@ -719,6 +727,7 @@ public class FeatureDetectionOnPhotoActivity3 extends AppCompatActivity {
                                 }
                                 double enYakınNoktaDisparity3 = farkListesiIlkCluster3.get(enYakınNoktaIndex);
 
+                                System.out.println(enYakınNoktaDisparity);
                                 System.out.println(farkListesiIlkCluster3);
                                 System.out.println(farkListesiIlkClusterFarklar3);
                                 System.out.println(farkListesiIlkClusterFarklar23);

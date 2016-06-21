@@ -67,6 +67,10 @@
             android:name=".photo.FeatureDetectionOnPhotoActivity3"
             android:label="@string/title_activity_feature_detection_on_photo3" >
         </activity>
+        <activity
+            android:name=".DenemeActivity"
+            android:label="@string/title_activity_deneme" >
+        </activity>
     </application>
 
 </manifest>
