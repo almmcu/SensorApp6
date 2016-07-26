@@ -22,7 +22,7 @@ public class ImageActivity extends AppCompatActivity {
     private String imgPath1 = "", imgPath2 = "";
     private int X, Y;
     boolean neTaraf = true;
-    private int KAC_TANE = 3;
+    private int KAC_TANE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

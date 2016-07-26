@@ -56,6 +56,10 @@ public class FeatureDetectionOnPhotoActivity2 extends AppCompatActivity {
     int X,Y;
     HashMap<Point, Double> distMap = new HashMap<>();
 
+    long timediff_detector = 0;
+    long timediff_descriptor = 0;
+
+
     // Opencv Kontrol ve Kod yazma
 
     private BaseLoaderCallback mLoaderCallback = new BaseLoaderCallback(this) {
@@ -101,9 +105,8 @@ try {
          * Bu iki satırı algoritmaları karşılaştırdıktan sonra sil
          * */
 
-        // X = 875;
-       // Y = 1330;
-
+//        X = 2451;
+//        Y = 1067;
         Rect roi = new Rect(X, Y, WIDTH, HEIGHT);
         Mat cropped = new Mat(image1, roi);
         Mat outputImage1 = cropped.clone();
@@ -134,7 +137,7 @@ try {
         System.out.println(outputImage2);
 
         // hız kontrolu yapmak için
-        // compareAlgorithm(image1, image2, "BRISK");
+        compareAlgorithm(image1, image2, "ORB");
 
         /**
          * Keypoints ve bunlardan elde edilecek descriptorların hesaplanması
@@ -143,7 +146,7 @@ try {
          * Bundan somra iki elde edilen desriptorlar yardımıyla iki resiminkarşılaştırılması yapışlıyor.
          **/
 
-        FeatureDetector SURF = FeatureDetector.create(FeatureDetector.SURF);
+        FeatureDetector SURF = FeatureDetector.create(FeatureDetector.ORB);
 
         keyPoints = new MatOfKeyPoint();
         logokeyPoints = new MatOfKeyPoint();
@@ -169,7 +172,7 @@ try {
         // SURF algoritması kullanılıyor.
 
         DescriptorExtractor SurfExtractor = DescriptorExtractor
-                .create(DescriptorExtractor.SURF);
+                .create(DescriptorExtractor.ORB);
 
 
 
@@ -201,7 +204,7 @@ try {
 
         // FLANBASED matcher kullanılarak karşılaştırma işlemi gerçekleştiriliyor
 
-        matcher = DescriptorMatcher.create(DescriptorMatcher.FLANNBASED);
+        matcher = DescriptorMatcher.create(DescriptorMatcher.BRUTEFORCE);
         try {
             matcher.match(descriptors, logoDescriptors, matches);
 
@@ -292,9 +295,8 @@ try {
 
             if ((fark) >= 0) {
                 ort += (fark);
-                farkList.add(fark);
+                farkList.add(fark);// ilk elenen noktalar sonrası disparity değerleri
                 count++;
-
                 // objList değerleri ekleniyor
 
                 point = new exp1.sensor.oda114.sensorapp6.kmeans.Point(keypoints_objectList.get(good_matches.get(i).queryIdx).pt.x + x, keypoints_objectList.get(good_matches.get(i).queryIdx).pt.y + Y);
@@ -308,6 +310,14 @@ try {
                 sceneDBScanTest.getHset().add(point);
             }
         }
+
+
+        // mean,  medyan, standart sapma, istatistikçiler.
+
+        // @variable farklist kullanılarak ikinci eleme işlemini gerçekleştir. (Murat hocanın söylediği)
+        // burada noktalarıda alman gerekiyor. Çünkü elinde sadece farklar var. bu farklar kullanılarak uzakılk hesaplanıp eleme yapılabilir. Ancak hangi
+        // fark hangi noktaya ait bulunması gerekiyor.
+
 
         /**
          * Eşeleşen noktalar alındı.
@@ -377,16 +387,27 @@ try {
         System.out.println(enYakınNoktaIndex);
         System.out.println(enYakınNoktaDisparity);
         distMap.put(sceneKMeans.getClusters().get(0).centroid, (0.34 * 5) / enYakınNoktaDisparity * 10000);
-        int baseline = 15;
+        int baseline = 5;
         output += "HESAPLAMASI SONRASI\n\n" +
                 "Uzaklık = " + (0.34 * baseline) / ort + "    ---- " + (0.34 * baseline) / enYakınNoktaDisparity * 10000 + "\n" +
                                 /*"10 cm = " + (0.34 * 10) / ort + "\n" +
                                 "15 cm = " + (0.34 * 15) / ort + "\n" +
                                 "20 cm = " + (0.34 * 20) / ort +*/
-                "\n";
+                "\n" +
+        "bulunan noktalar: " + logokeyPoints + "  - -- " + keyPoints + "\n" +
+                "geçen zaman: " + timediff_detector + "  - -- " + timediff_descriptor + "\n" ;
 
         System.out.println(ort);
         System.out.println("K means Hesaplandı");
+        // ne kadar süre geçmiş ve kaç tane nokta bulkunnmuş bilgilerini ekrana yazdırabilirsin
+        // önce karşılaştırma metodunu çağır zamanı hesaplasın gerisi yine aynı devam etsin.
+        // yani iki kere hesaplanmış olunacak.
+        System.out.println(output);
+        System.out.println(keyPoints);
+        System.out.println(logokeyPoints);
+        System.out.println(good_matches);
+        System.out.println(timediff_detector);
+        System.out.println(timediff_descriptor);
 
         // Kaç küme oluştu: sceneDBScanTest.getTrl().size();
         // i. kümedeki eleman sayısı. sceneDBScanTest.getTrl().get(i).size();
@@ -510,8 +531,7 @@ try {
 
         long currentTimeinMilisecoond  = 0;
         long temp = 0 ;
-        long timediff_detector = 0;
-        long timediff_descriptor = 0;
+
 
         if (algorithm.equals("SURF")) {
             DETECTOR_ALGRITHM = FeatureDetector.create(FeatureDetector.SURF);
